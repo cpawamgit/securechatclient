@@ -10,6 +10,7 @@ import {
     useParams
 } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 function Room(params) {
     const [isAdmin, setIsAdmin] = useState(false);
@@ -23,6 +24,7 @@ function Room(params) {
     const [messagesList, setMessagesList] = useState([]);
     const [nickName, setNickName] = useState('');
     const [typing, setTyping] = useState('');
+    const [userList, setUserList] = useState([]);
 
     function updateMsgList(msg) {
         setMessagesList((prev) => {
@@ -33,9 +35,22 @@ function Room(params) {
 
     }
 
+    function sendMessageIfEnter(e) {
+        if (e.key === "Enter"){
+            sendMessage()
+        } else {
+            return
+        }
+    }
+
     function sendMessage() {
         params.socket.emit('chat message sent', 
         {msg: typing, sender: nickName, roomName: params.roomName})
+        setMessagesList((prev) => {
+            const tmp = [...prev]
+            tmp.push({sender: "You", msg: typing})
+            return ([...tmp])
+        })
         setTyping('');
     }
 
@@ -53,13 +68,18 @@ function Room(params) {
 
     function sendPassword() {
         params.socket.emit('check password', 
-        {roomName: params.roomName, password: roomPassword})
+        {roomName: params.roomName, password: roomPassword, nickName: nickName})
     }
 
     useEffect(() => {
         if (!isReady) {
+            let nick = nickName;
+            if (params.adminNick !== ''){
+                setNickName(params.adminNick)
+                nick = params.adminNick;
+            }
             params.socket.emit('enter room', 
-            {id :params.socket.id, roomName: params.roomName})
+            {id :params.socket.id, roomName: params.roomName, nickName: nick})
             setIsReady(true);
         }
         params.socket.on('errMsg', (msg) => {
@@ -84,6 +104,9 @@ function Room(params) {
         })
         params.socket.on('chat message received', (msg) => {
             updateMsgList(msg)
+        })
+        params.socket.on('update user list', (userlst) => {
+            setUserList(userlst)
         })
     }, [])
 
@@ -118,8 +141,8 @@ function Room(params) {
     }
     const messages = messagesList.map((item) => {
         return(
-            <div className="message">
-                <p>{item.sender}</p>
+            <div key={uuidv4()} className="message">
+                <p>{item.sender} : </p>
                 <p>{item.msg}</p>
             </div>
         )
@@ -131,7 +154,7 @@ function Room(params) {
                     id="typing"
                     name="typing"
                     value={typing}
-                    onChange={handleChangeTyping}></input>
+                    onChange={handleChangeTyping} onKeyDown={sendMessageIfEnter}></input>
                     <button onClick={sendMessage}>Enter</button>
     </div>
 
@@ -143,20 +166,31 @@ function Room(params) {
         </div>
     </div>
 
+    const users = userList.map((item) => {
+       return (<div key={uuidv4()} className="users">
+            <p>{item.nickName}</p>
+            <p>{item.owner ? "admin" : "user"}</p>
+        </div>)
+    })
+
     return isReady ? isAdmin ? (
         <div className="room-wrapper">
             {errMsg && <h1>{errMsg}</h1>}
+            <h1>Room name : {params.roomName}</h1>
             {msgDisplayer}
             {typeAndSend}
+            {users}
         </div>
     )
         :
         (
             <div className="room-wrapper">
                 {errMsg && <h1>{errMsg}</h1>}
+                <h1>Room name : {params.roomName}</h1>
                 {authDiv}
-                {msgDisplayer}
-                {typeAndSend}
+                {userAuthenticated && msgDisplayer}
+                {userAuthenticated && typeAndSend}
+                {userAuthenticated && users}
             </div>
         )
         :
