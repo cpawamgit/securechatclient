@@ -20,6 +20,7 @@ import Room from "./components/room";
 
 const socket = io("http://localhost:3002");
 
+
 function App() {
   const [actualSocket, setActualSocket] = useState({})
   const [isLoaded, setIsLoaded] = useState(false);
