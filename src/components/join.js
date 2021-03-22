@@ -16,7 +16,7 @@ function Join(params) {
     const [isReady, setIsReady] = useState(false)
 
     useEffect(() => {
-        fetch('http://localhost:3002/getrooms', {
+        fetch('https://server2.cyrilmorin.fr:3002/getrooms', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

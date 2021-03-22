@@ -18,7 +18,7 @@ import Join from "./components/join";
 import Room from "./components/room";
 
 
-const socket = io("https://server2.cyrilmorin.fr");
+const socket = io("https://server2.cyrilmorin.fr:3002");
 
 
 function App() {

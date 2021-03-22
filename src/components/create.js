@@ -36,7 +36,7 @@ function Create(params) {
         } else {
             access = 'request'
         }
-        fetch('http://localhost:3002/createroom', {
+        fetch('https://server2.cyrilmorin.fr:3002/createroom', {
             method: 'POST',
             
             body: JSON.stringify({
@@ -53,6 +53,7 @@ function Create(params) {
             headers: {
                 'Content-Type': 'application/json'
               },
+	    mode: 'cors'
         })
             .then((res) => {
                 if (!res.ok){
