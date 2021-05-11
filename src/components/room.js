@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
     HashRouter as Router,
     Switch,
@@ -9,46 +9,63 @@ import {
     useLocation,
     useParams
 } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { v4 as uuidv4 } from 'uuid';
 
 function Room(params) {
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [isReady, setIsReady] = useState(false);
-    const [srvmsg, setsrvmsg] = useState('');
-    const [errMsg, setErrMsg] = useState('');
-    const [userAuthenticated, setUserAuthenticated] = useState(false);
-    const [userCheck, setUserCheck] = useState('');
-    const [roomPassword, setRoomPassword] = useState('');
-    const [passwordResponse, setPasswordResponse] = useState('');
     const [messagesList, setMessagesList] = useState([]);
-    const [nickName, setNickName] = useState('');
     const [typing, setTyping] = useState('');
-    const [userList, setUserList] = useState([]);
-
-    function updateMsgList(msg) {
-        setMessagesList((prev) => {
-            const tmp = [...prev]
-            tmp.push({sender: msg.sender, msg: msg.msg})
-            return ([...tmp])
-        })
-
-    }
+    const [requestList, setRequestList] = useState([])
+    const [pendingRequest, setPendingRequest] = useState(null)
+    console.log('user list :')
+    console.log(params.userList)
 
     function sendMessageIfEnter(e) {
-        if (e.key === "Enter"){
+        if (e.key === "Enter") {
             sendMessage()
         } else {
             return
         }
     }
 
-    function sendMessage() {
-        params.socket.emit('chat message sent', 
-        {msg: typing, sender: nickName, roomName: params.roomName})
+    async function encryptMsgs() {
+        const lst = params.userList.reduce((acc, item) => {
+            if (item.nickName !== params.nickName) {
+                const tmp = {
+                    user: item.nickName,
+                    key: item.pubKey
+                }
+                acc.push(tmp)
+            }
+            return acc;
+        }, [])
+        const msgs = await Promise.all(lst.map(async (item) => {
+            let encoder = new TextEncoder()
+            let encodedMsg = encoder.encode(typing)
+            const encrypedMsg = await window.crypto.subtle.encrypt(
+                {
+                    name: "RSA-OAEP"
+                },
+                item.key,
+                encodedMsg
+            )
+            return {
+                user: item.user,
+                msg: encrypedMsg
+            }
+        }))
+        return msgs;
+    }
+
+    async function sendMessage() {
+        const encryptedMsgs = await encryptMsgs()
+        params.socket.emit('chat message sent',
+            { msg: encryptedMsgs, sender: params.nickName, roomName: params.roomName })
+        console.log('params nic')
+        console.log(params.nickName)
         setMessagesList((prev) => {
             const tmp = [...prev]
-            tmp.push({sender: "You", msg: typing})
+            tmp.push({ sender: "You", msg: typing })
             return ([...tmp])
         })
         setTyping('');
@@ -57,92 +74,91 @@ function Room(params) {
     function handleChangeTyping(e) {
         setTyping(e.target.value)
     }
-    
-    function handleChangePassword(e) {
-        setRoomPassword(e.target.value);
+
+    function handlePendingRequest(user, decision) {
+        setRequestList(requestList => {
+            let tmp = requestList.filter(item => item.id !== user.id)
+            return tmp
+        })
+        setPendingRequest({ user: user, decision: decision })
     }
 
-    function handleChangeNickname(e) {
-        setNickName(e.target.value);
+    function handleConfirm(confirms) {
+        if (confirms){
+            if (pendingRequest.decision === 'accept'){
+                params.socket.emit('request accepted', pendingRequest.user)
+            } else {
+                params.socket.emit('request denied', pendingRequest.user)
+            }
+        } else {
+            setRequestList(requestList => {
+                let tmp = [...requestList]
+                tmp.push(pendingRequest.user)
+                return tmp
+            })
+        }
+        setPendingRequest(null)
     }
 
-    function sendPassword() {
-        params.socket.emit('check password', 
-        {roomName: params.roomName, password: roomPassword, nickName: nickName})
+    function buildList() {
+        if (params.userList && Array.isArray(params.userList)) {
+            return params.userList.map((item) => {
+                return (<div key={uuidv4()} className="users">
+                    <p>{item.nickName}</p>
+                    <p>{item.owner ? "admin" : "user"}</p>
+                </div>)
+            })
+        } else {
+            return null;
+        }
+    }
+
+    async function decypher(msg) {
+        const decyphered = await window.crypto.subtle.decrypt(
+            {
+                name: "RSA-OAEP"
+            },
+            params.privKey,
+            msg.msg
+        )
+        let decoder = new TextDecoder();
+        let decoded = decoder.decode(decyphered)
+        return {
+            sender: msg.sender,
+            msg: decoded
+        };
     }
 
     useEffect(() => {
-        if (!isReady) {
-            let nick = nickName;
-            if (params.adminNick !== ''){
-                setNickName(params.adminNick)
-                nick = params.adminNick;
-            }
-            params.socket.emit('enter room', 
-            {id :params.socket.id, roomName: params.roomName, nickName: nick})
-            setIsReady(true);
+        function updateMsgList(msg) {
+            setMessagesList((prev) => {
+                const tmp = [...prev]
+                tmp.push({ sender: msg.sender, msg: msg.msg })
+                return ([...tmp])
+            })
         }
-        params.socket.on('errMsg', (msg) => {
-            setErrMsg(msg);
+        params.socket.on('chat message received', async (msg) => {
+            const clearMsg = await decypher(msg)
+            updateMsgList(clearMsg)
         })
-        params.socket.on('room entered admin', (msg) => {
-            setsrvmsg(msg.srvMsg);
-            setIsAdmin(true);
-            setNickName(params.adminNick);
-        })
-        params.socket.on('room entered', (msg) => {
-            setsrvmsg(msg)
-        })
-        params.socket.on('user check', (msg) => {
-            setUserCheck(msg)
-        })
-        params.socket.on('password response', (msg) => {
-            setPasswordResponse(msg);
-            if (msg === 'true'){
-                setUserAuthenticated(true)
-            }
-        })
-        params.socket.on('chat message received', (msg) => {
-            updateMsgList(msg)
-        })
-        params.socket.on('update user list', (userlst) => {
-            setUserList(userlst)
+        params.socket.on('entry requested', userData => {
+            setRequestList(requestList => {
+                let tmp = [...requestList]
+                tmp.push(userData)
+                return tmp
+            })
         })
     }, [])
 
-    let authDiv;
-    if (!userAuthenticated){
-        if (userCheck === 'password'){
-            authDiv = (
-                <div className="authDiv">
-                    <p>Please enter the room password : </p>
-                    <input type="password"
-                    id="password"
-                    name="password"
-                    value={roomPassword}
-                    onChange={handleChangePassword}></input>
-                    <p>Choose a nickname : </p>
-                    <input type="text"
-                    id="nickName"
-                    name="nickName"
-                    value={nickName}
-                    onChange={handleChangeNickname}></input>
-                    <button onClick={sendPassword}>Enter</button>
-                    <h1>Password response : {passwordResponse}</h1>
-                </div>
-            )
-        } else if (userCheck === 'request'){
 
-        } else {
-
-        }
-    } else {
-        authDiv = null;
-    }
     const messages = messagesList.map((item) => {
-        return(
+        let user = params.userColors.find((usr) => usr.nickName === item.sender)
+        if (!user) {
+            user = { color: "white" }
+        }
+        return (
             <div key={uuidv4()} className="message">
-                <p>{item.sender} : </p>
+                <p style={{ backgroundColor: user.color }}>{item.sender} : </p>
                 <p>{item.msg}</p>
             </div>
         )
@@ -150,12 +166,12 @@ function Room(params) {
 
     const typeAndSend = <div>
         <p>your message : </p>
-                    <input type="text"
-                    id="typing"
-                    name="typing"
-                    value={typing}
-                    onChange={handleChangeTyping} onKeyDown={sendMessageIfEnter}></input>
-                    <button onClick={sendMessage}>Enter</button>
+        <input type="text"
+            id="typing"
+            name="typing"
+            value={typing}
+            onChange={handleChangeTyping} onKeyDown={sendMessageIfEnter}></input>
+        <button onClick={sendMessage}>Enter</button>
     </div>
 
     const msgDisplayer = <div className="msg-displayer">
@@ -166,35 +182,56 @@ function Room(params) {
         </div>
     </div>
 
-    const users = userList.map((item) => {
-       return (<div key={uuidv4()} className="users">
-            <p>{item.nickName}</p>
-            <p>{item.owner ? "admin" : "user"}</p>
-        </div>)
-    })
-
-    return isReady ? isAdmin ? (
+    const users = buildList()
+    const waitingUsers = <div>
+        <h2>Users waiting for approval :</h2>
+        {requestList.map((item) => {
+            return (<div style={{ display: "flex", flexDirection: "row" }}>
+                <button style={{ color: "darkgreen" }}
+                    onClick={() => handlePendingRequest(item, 'accept')}
+                >Accept</button>
+                <p>{item.nickName}</p>
+                <button style={{ color: "red" }}
+                    onClick={() => handlePendingRequest(item, 'deny')}
+                >Deny</button>
+            </div>)
+        })}
+    </div>
+    const confirmButtons = pendingRequest !== null ?
+        pendingRequest.decision === 'accept' ?
+            <div style={{position: "fixed",
+             zIndex: 2,
+             top: 0,
+             left: 0,
+              height: "100vh",
+               width: "100vw", 
+               backgroundColor: "rgba(30, 30, 30, 0.2)"
+                }}>
+                <p style={{backgroundColor: "white",
+                 width: "20vw",
+                  marginLeft: "40vw",
+                  marginTop: "60vh"}}>Are you sur to accept {pendingRequest.user.nickName} request</p>
+                <button onClick={() => handleConfirm(true)}>Yes</button>
+                <button onClick={() => handleConfirm(false)}>No</button>
+            </div>
+            :
+            <div style={{ zIndex: 2, height: "90vh", width: "90vw", backgroundColor: "lightgray" }}>
+                <p>Are you sur to deny {pendingRequest.user.nickName} request</p>
+                <button onClick={() => handleConfirm(true)}>Yes</button>
+                <button onClick={() => handleConfirm(false)}>No</button>
+            </div>
+        :
+        null
+    return (
         <div className="room-wrapper">
-            {errMsg && <h1>{errMsg}</h1>}
+            {params.isAdmin && waitingUsers}
             <h1>Room name : {params.roomName}</h1>
             {msgDisplayer}
             {typeAndSend}
             {users}
+            {pendingRequest !== null && confirmButtons}
         </div>
     )
-        :
-        (
-            <div className="room-wrapper">
-                {errMsg && <h1>{errMsg}</h1>}
-                <h1>Room name : {params.roomName}</h1>
-                {authDiv}
-                {userAuthenticated && msgDisplayer}
-                {userAuthenticated && typeAndSend}
-                {userAuthenticated && users}
-            </div>
-        )
-        :
-        <h1>Waiting server response...</h1>
 }
 
 export default Room;

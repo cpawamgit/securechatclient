@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     HashRouter as Router,
     Switch,
@@ -12,101 +12,101 @@ import {
 import { useState } from "react";
 
 function Create(params) {
-    const [nickName, setNickName] = useState('');
-    const [roomName, setRoomName] = useState('');
-    const [password, setPassword] = useState('');
-    const [creationError, setCreationError] = useState(false); 
-    const [creationMsg, setCreationMsg] = useState('');
-    const [roomCreated, setRoomCreated] = useState(false)
+    const [access, setAccess] = useState('request')
+    const [redirect, setRedirect] = useState(false)
 
     function handleChangeNick(e) {
-        setNickName(e.target.value);
+        params.setNickName(e.target.value);
     }
     function handleChangeRoom(e) {
-        setRoomName(e.target.value);
+        params.setRoomName(e.target.value);
     }
     function handleChangePass(e) {
-        setPassword(e.target.value);
+        params.setPassword(e.target.value);
     }
 
     function handleSubmit(e) {
-        let access;
-        if (password !== ''){
-            access = 'password'
-        } else {
-            access = 'request'
-        }
-        fetch('https://server2.cyrilmorin.fr:3002/createroom', {
-            method: 'POST',
-            
-            body: JSON.stringify({
-                roomName: roomName,
-                roomUsers: [{
-                    nickName: nickName,
-                    id: params.id,
-                    owner: true
-                }],
-                roomAccess: access,
-                roomPassword: password,
-                roomOwner: params.id
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-              },
-	    mode: 'cors'
-        })
-            .then((res) => {
-                if (!res.ok){
-                    setCreationError(true)
-                    setRoomCreated(false)
-                } else {
-                    setRoomCreated(true)
-                    setCreationError(false)
-                }
-                return res.json();
-            })
-            .then((res) => {
-                setCreationMsg(res.msg)
-            })
+        params.socket.emit('room creation', {
+                    roomName: params.roomName,
+                    roomUsers: [{
+                        nickName: params.nickName,
+                        id: params.socket.id,
+                        pubKey: params.exportedPublicKey
+                    }],
+                    roomAccess: access,
+                    roomPassword: params.password,
+                    roomOwner: params.socket.id,
+                    blockedUsers: []
+                })        
         e.preventDefault();
     }
 
+    useEffect(() => {
+        params.socket.on('room created', () => {
+            params.setIsAdmin(true)
+            setRedirect(true)
+        })
+    }, [])
 
+    let selected = { backgroundColor: "lightgreen" }
     return (
         <div className="create-wrapper">
-            {!roomCreated && <form onSubmit={handleSubmit}>
+            <div className="room-access-select">
+                <div className="button-group">
+                    <button
+                        onClick={() => setAccess('password')}
+                        style={access === "password" ? selected : null}
+                    >Password
+                </button>
+                    <button
+                        onClick={() => setAccess('request')}
+                        style={access === "request" ? selected : null}
+                    >Request
+                </button>
+                    <button
+                        onClick={() => setAccess('free')}
+                        style={access === "free" ? selected : null}
+                    >Free Access
+                 </button>
+                </div>
+            </div>
+            <form
+                className="creation-form"
+                onSubmit={handleSubmit}>
                 <label htmlFor="nickName">Enter your nickname here :</label>
                 <input type="text"
                     id="nickName"
                     name="nickName"
-                    value={nickName}
-                    onChange={handleChangeNick}></input>
-                    
+                    value={params.nickName}
+                    onChange={handleChangeNick}
+                    required
+                    ></input>
+
                 <label htmlFor="roomName">Enter your room name here :</label>
                 <input type="text"
                     id="roomName"
                     name="roomName"
-                    value={roomName}
-                    onChange={handleChangeRoom}></input>
-                    
-                <label htmlFor="password">Room password (leave blank if not needed)</label>
+                    value={params.roomName}
+                    onChange={handleChangeRoom}
+                    required
+                    ></input>
+                {access === "password" && <div 
+                style={{display: "flex", flexDirection: "column"}}>
+                <label htmlFor="password">Room password</label>
                 <input type="password"
                     id="password"
                     name="password"
-                    value={password}
-                    onChange={handleChangePass}></input>                    
+                    value={params.password}
+                    onChange={handleChangePass}
+                    required
+                    ></input>
+                    </div>}
                 <input type="hidden" value={params.id} name="id"></input>
                 <button type="submit">Create Room !</button>
-            </form>}
-            {creationError && <h1>{creationMsg}</h1>}
-            {roomCreated &&
-                <div>
-                    <h1>{creationMsg}</h1>
-                    <Link to='/room'><button onClick={() => params.setRoomandNick(roomName, nickName)}>Enter the room!</button></Link>
-                </div>
-            }
+            </form>
+            {redirect && <Redirect to="/room" />}
         </div>
-        
+
     );
 }
 
