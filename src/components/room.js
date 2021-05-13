@@ -17,14 +17,39 @@ function Room(params) {
     const [typing, setTyping] = useState('');
     const [requestList, setRequestList] = useState([])
     const [pendingRequest, setPendingRequest] = useState(null)
-    console.log('user list :')
-    console.log(params.userList)
+    const [messageOptions, setMessageOptions] = useState({
+        activated: false,
+        id: null
+    })
 
     function sendMessageIfEnter(e) {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !e.shiftKey) {
             sendMessage()
+            e.preventDefault()
         } else {
             return
+        }
+    }
+
+    function handleQuote(msg) {
+        setTyping(
+            `${msg.sender} said :\n"${msg.msg}"\n\n`
+        )
+        let typing = document.getElementById('typing')
+        typing.focus()
+    }
+
+    function handleMessageOptions(id) {
+        if (messageOptions.activated && id === messageOptions.id) {
+            setMessageOptions({
+                activated: false,
+                id: null
+            })
+        } else {
+            setMessageOptions({
+                activated: true,
+                id: id
+            })
         }
     }
 
@@ -61,11 +86,10 @@ function Room(params) {
         const encryptedMsgs = await encryptMsgs()
         params.socket.emit('chat message sent',
             { msg: encryptedMsgs, sender: params.nickName, roomName: params.roomName })
-        console.log('params nic')
-        console.log(params.nickName)
         setMessagesList((prev) => {
             const tmp = [...prev]
-            tmp.push({ sender: "You", msg: typing })
+            let id = uuidv4()
+            tmp.push({ sender: "You", msg: typing, id: id })
             return ([...tmp])
         })
         setTyping('');
@@ -84,8 +108,8 @@ function Room(params) {
     }
 
     function handleConfirm(confirms) {
-        if (confirms){
-            if (pendingRequest.decision === 'accept'){
+        if (confirms) {
+            if (pendingRequest.decision === 'accept') {
                 params.socket.emit('request accepted', pendingRequest.user)
             } else {
                 params.socket.emit('request denied', pendingRequest.user)
@@ -132,8 +156,9 @@ function Room(params) {
     useEffect(() => {
         function updateMsgList(msg) {
             setMessagesList((prev) => {
+                let id = uuidv4()
                 const tmp = [...prev]
-                tmp.push({ sender: msg.sender, msg: msg.msg })
+                tmp.push({ sender: msg.sender, msg: msg.msg, id: id })
                 return ([...tmp])
             })
         }
@@ -156,21 +181,30 @@ function Room(params) {
         if (!user) {
             user = { color: "white" }
         }
+        let generatedId = uuidv4()
         return (
-            <div key={uuidv4()} className="message">
-                <p style={{ backgroundColor: user.color }}>{item.sender} : </p>
-                <p>{item.msg}</p>
+            <div style={{ backgroundColor: user.color, width: "max-content" }}
+                key={generatedId}
+                id={generatedId}
+                onClick={() => handleMessageOptions(item.id)}
+                className="message">
+                <p>{item.sender} : </p>
+                <p style={{whiteSpace: "pre-wrap"}}>{item.msg}</p>
+                {(messageOptions.activated && messageOptions.id === item.id) &&
+                    <button onClick={() => handleQuote(item)} >Quote</button>
+                }
             </div>
         )
     })
 
     const typeAndSend = <div>
         <p>your message : </p>
-        <input type="text"
+        <textarea 
+        style={{whiteSpace: "pre-wrap"}}
             id="typing"
             name="typing"
             value={typing}
-            onChange={handleChangeTyping} onKeyDown={sendMessageIfEnter}></input>
+            onChange={handleChangeTyping} onKeyDown={sendMessageIfEnter}></textarea>
         <button onClick={sendMessage}>Enter</button>
     </div>
 
@@ -199,18 +233,21 @@ function Room(params) {
     </div>
     const confirmButtons = pendingRequest !== null ?
         pendingRequest.decision === 'accept' ?
-            <div style={{position: "fixed",
-             zIndex: 2,
-             top: 0,
-             left: 0,
-              height: "100vh",
-               width: "100vw", 
-               backgroundColor: "rgba(30, 30, 30, 0.2)"
-                }}>
-                <p style={{backgroundColor: "white",
-                 width: "20vw",
-                  marginLeft: "40vw",
-                  marginTop: "60vh"}}>Are you sur to accept {pendingRequest.user.nickName} request</p>
+            <div style={{
+                position: "fixed",
+                zIndex: 2,
+                top: 0,
+                left: 0,
+                height: "100vh",
+                width: "100vw",
+                backgroundColor: "rgba(30, 30, 30, 0.2)"
+            }}>
+                <p style={{
+                    backgroundColor: "white",
+                    width: "20vw",
+                    marginLeft: "40vw",
+                    marginTop: "60vh"
+                }}>Are you sur to accept {pendingRequest.user.nickName} request</p>
                 <button onClick={() => handleConfirm(true)}>Yes</button>
                 <button onClick={() => handleConfirm(false)}>No</button>
             </div>
@@ -222,13 +259,23 @@ function Room(params) {
             </div>
         :
         null
+    let centerWidth = 90 * (params.ratio.height / params.ratio.width)
+    centerWidth = centerWidth > 95 ? 95 : centerWidth
+    console.log(messagesList)
     return (
-        <div className="room-wrapper">
+        <div className="room-wrapper"
+        style={{width: `${centerWidth}vw`}}
+        >
             {params.isAdmin && waitingUsers}
             <h1>Room name : {params.roomName}</h1>
-            {msgDisplayer}
-            {typeAndSend}
-            {users}
+            <p>{centerWidth}</p>
+            <div style={{
+                backgroundColor: "lightgray"
+            }}>
+                {msgDisplayer}
+                {typeAndSend}
+                {users}
+            </div>
             {pendingRequest !== null && confirmButtons}
         </div>
     )

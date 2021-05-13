@@ -17,6 +17,7 @@ import Create from "./components/create";
 import Join from "./components/join";
 import Room from "./components/room";
 import colorList from './components/colors'
+import matrix from './matrix.jpg'
 
 /////////////   SRV CONFIG    /////////////////////
 const localMode = true
@@ -43,86 +44,93 @@ function App() {
   const [pubKey, setPubKey] = useState('')
   const [privKey, setPrivKey] = useState('')
   const [exportedPublicKey, setExportedPublicKey] = useState('')
-  const [displayMessage, setDisplayMessage] = useState(true)
+  const [connected, setConnected] = useState(false)
   const [userList, setUserList] = useState([]);
   const [colors, setColors] = useState(colorList)
   const [userColors, setUserColors] = useState([])
   const [isAdmin, setIsAdmin] = useState(false);
+  const [ratio, setRatio] = useState({
+    width: document.documentElement.clientWidth,
+    height: document.documentElement.clientHeight,
+  })
 
-  function displayTimer() {
-    setTimeout(() => {
-      setDisplayMessage(false)
-    }, 5000);
+  console.log(ratio)
+
+  function refreshRatio() {
+    setRatio({
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight,
+    })
   }
 
   async function importKey(key) {
     const importedKey = await window.crypto.subtle.importKey(
-        "jwk",
-        key,
-        {
-            name: "RSA-OAEP",
-            hash: "SHA-256"
-        },
-        true,
-        ["encrypt"]
+      "jwk",
+      key,
+      {
+        name: "RSA-OAEP",
+        hash: "SHA-256"
+      },
+      true,
+      ["encrypt"]
     )
     return importedKey;
-}
+  }
 
-async function importUsers(userlst) {
+  async function importUsers(userlst) {
     const lst = await Promise.all(userlst.map(async (item) => {
-        const key = await importKey(item.pubKey);
-        item.pubKey = key;
-        return item;
+      const key = await importKey(item.pubKey);
+      item.pubKey = key;
+      return item;
     }))
     return lst
-}
+  }
 
-function pickColor() {
-  let num = Math.floor(Math.random() * colors.length)
-  let colorArray = colors;
-  let color = colorArray.splice(num, 1)
-  setColors(colorArray);
-  return color[0];
-}
+  function pickColor() {
+    let num = Math.floor(Math.random() * colors.length)
+    let colorArray = colors;
+    let color = colorArray.splice(num, 1)
+    setColors(colorArray);
+    return color[0];
+  }
 
-useEffect(() => {
-  let coloredUser;
-  let tmp = [...userColors];
-  userList.forEach((user) => {
+  useEffect(() => {
+    let coloredUser;
+    let tmp = [...userColors];
+    userList.forEach((user) => {
       coloredUser = userColors.find((item) => {
-          return item.nickName === user.nickName
+        return item.nickName === user.nickName
       })
-      if (!coloredUser){
-          if (user.nickName === nickName){
-              coloredUser = {
-                  nickName: user.nickName,
-                  color: "white"
-              }
-          } else {
-              coloredUser = {
-                  nickName: user.nickName,
-                  color: pickColor()
-              }
-          }                
-          tmp.push(coloredUser)
-      }            
-  })
-  let colorArray = [...colors]
-  tmp = tmp.reduce((acc, item) => {
+      if (!coloredUser) {
+        if (user.nickName === nickName) {
+          coloredUser = {
+            nickName: user.nickName,
+            color: "white"
+          }
+        } else {
+          coloredUser = {
+            nickName: user.nickName,
+            color: pickColor()
+          }
+        }
+        tmp.push(coloredUser)
+      }
+    })
+    let colorArray = [...colors]
+    tmp = tmp.reduce((acc, item) => {
       let user = userList.find((usr) => {
-          return usr.nickName === item.nickName
+        return usr.nickName === item.nickName
       })
-      if (user){
-          acc.push(item)
+      if (user) {
+        acc.push(item)
       } else {
-          colorArray.push(item.color)
+        colorArray.push(item.color)
       }
       return acc
-  }, [])
-  setUserColors(tmp)
-  setColors(colorArray)
-}, [userList])
+    }, [])
+    setUserColors(tmp)
+    setColors(colorArray)
+  }, [userList])
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -135,7 +143,7 @@ useEffect(() => {
       const listWithImportedKey = await importUsers(userlst)
       setUserList(listWithImportedKey)
       console.log('update user list called')
-  })
+    })
     if (pubKey === '') {
       window.crypto.subtle.generateKey(
         {
@@ -149,7 +157,6 @@ useEffect(() => {
       ).then((res) => {
         setPrivKey(res.privateKey);
         setPubKey(res.publicKey);
-        displayTimer();
         window.crypto.subtle.exportKey(
           "jwk",
           res.publicKey
@@ -158,13 +165,92 @@ useEffect(() => {
         })
       })
     }
+    setInterval(() => {
+      socket.emit('check connection')
+      var connectionTimeout = setTimeout(() => {
+        setConnected(false)
+        socket.removeAllListeners('connection ok')
+      }, 500);
+      socket.on('connection ok', () => {
+        if (!connected) {
+          setConnected(true)
+        }
+        clearTimeout(connectionTimeout)
+        socket.removeAllListeners('connection ok')
+      })
+    }, 5000);
+    window.addEventListener('resize', refreshRatio)
   }, [])
+
+  function handleSlide() {
+    let mainBg = document.getElementById('main-bg')
+    setInterval(() => {
+      mainBg.style.opacity = 0 //heeeeeeeeeeeeeeeeeeeeeeeeeeeeere !!!!!!!!
+    }, 200);
+  }
+
+  const stateBgColor = (pubKey !== '' && connected) ? 'lightgreen' : "lightgrey"
   return (
-    !actualSocket ?
-      <h1 style={{ color: 'darkgreen' }}>Connecting to the server...</h1>
-      :
-      <div className="App">
-        {displayMessage ? privKey ? <h1>Keys generated</h1> : <h1>Generating keys</h1> : null}
+    <div className="main-container">
+      <div className="main-bg"
+      id="main-bg"
+        style={{
+          width: "100vw",
+          position: 'fixed',
+          zIndex: -1,
+          opacity: 0.3
+        }}
+      >
+        <img src={matrix} />
+        <img src={matrix} />
+        <img src={matrix} onLoad={handleSlide} />
+      </div>
+
+      <div className="App"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 2
+        }}
+      >
+        <div
+          style={{
+            top: 0,
+            left: 0,
+            margin: 0,
+            padding: 0,
+            width: "20vw",
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            backgroundColor: stateBgColor
+          }}
+        >
+          {pubKey === '' ?
+            <p style={{
+              color: 'darkred',
+              fontSize: "calc(0.5vh + 0.5vw)"
+            }}>Genereting encryption keys...</p>
+            :
+            <p style={{
+              color: 'darkgreen',
+              fontSize: "calc(0.5vh + 0.5vw)"
+            }}>Encryption Keys OK</p>
+          }
+          {!connected ?
+            <p style={{
+              color: 'yellow',
+              fontSize: "calc(0.5vh + 0.5vw)"
+            }}>Connecting to server...</p>
+            :
+            <p style={{
+              color: 'darkgreen',
+              fontSize: "calc(0.5vh + 0.5vw)"
+            }}>Connected to server</p>
+          }
+        </div>
         <Router>
           <Switch>
             <Route exact path="/">
@@ -185,14 +271,14 @@ useEffect(() => {
             <Route exact path="/join">
               <Join roomName={roomName}
                 setRoomName={setRoomName}
-                socket={actualSocket} 
+                socket={actualSocket}
                 nickName={nickName}
                 setNickName={setNickName}
                 exportedPublicKey={exportedPublicKey}
                 setIsAdmin={setIsAdmin}
                 password={password}
                 setPassword={setPassword}
-                />
+              />
             </Route>
             <Route exact path="/room">
               <Room socket={actualSocket}
@@ -204,11 +290,13 @@ useEffect(() => {
                 userList={userList}
                 userColors={userColors}
                 isAdmin={isAdmin}
+                ratio={ratio}
               />
             </Route>
           </Switch>
         </Router>
       </div>
+    </div>
   );
 }
 
