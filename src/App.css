@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+
+  background-color: rgba(0, 255, 0, 0.164);
+  box-shadow: 0 0 100px darkgreen;
 }
 
 body{
@@ -10,6 +13,28 @@ body{
 p{
   margin: 0;
   padding: 0;
+}
+
+img{
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.home-buttons{
+  margin-top: 7vh;
+  width: 80%;
+  height: 22vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: black solid 2px;
+  box-shadow: 0 0 20px darkgreen;
+  border-radius: 10px;
+  border: darkgreen solid 2px;
+}
+
+.home-buttons > p {
+  color: lightgreen;
+  font-size: calc(2vh + 2vw);
 }
 
 /********************************************************

@@ -53,8 +53,7 @@ function App() {
     width: document.documentElement.clientWidth,
     height: document.documentElement.clientHeight,
   })
-
-  console.log(ratio)
+  const [displayStatus, setDisplayStatus] = useState(true)
 
   function refreshRatio() {
     setRatio({
@@ -142,7 +141,6 @@ function App() {
     socket.on('update user list', async (userlst) => {
       const listWithImportedKey = await importUsers(userlst)
       setUserList(listWithImportedKey)
-      console.log('update user list called')
     })
     if (pubKey === '') {
       window.crypto.subtle.generateKey(
@@ -165,10 +163,15 @@ function App() {
         })
       })
     }
+    window.addEventListener('resize', refreshRatio)
+  }, [])
+
+  useEffect(() => {
     setInterval(() => {
       socket.emit('check connection')
       var connectionTimeout = setTimeout(() => {
         setConnected(false)
+        handleConnectionStatus(true)
         socket.removeAllListeners('connection ok')
       }, 500);
       socket.on('connection ok', () => {
@@ -177,55 +180,115 @@ function App() {
         }
         clearTimeout(connectionTimeout)
         socket.removeAllListeners('connection ok')
+        setTimeout(() => {
+          handleConnectionStatus(false)
+        }, 3000);
       })
     }, 5000);
-    window.addEventListener('resize', refreshRatio)
-  }, [])
+  }, [displayStatus])
+
+  function handleConnectionStatus(value) {
+    console.log("enter in handle...")
+    if (!value) {
+      if (displayStatus) {
+        console.log("---------1------------")
+        setDisplayStatus(false)
+      }
+    } else {
+      console.log("display status")
+      console.log(displayStatus)
+      if (!displayStatus) {
+        console.log("----------2------------")
+        setDisplayStatus(true)
+      }
+    }
+  }
 
   function handleSlide() {
     let mainBg = document.getElementById('main-bg')
     setInterval(() => {
-      mainBg.style.opacity = 0 //heeeeeeeeeeeeeeeeeeeeeeeeeeeeere !!!!!!!!
-    }, 200);
+      let actual = mainBg.scrollTop
+      //element.scrollHeight - element.scrollTop === element.clientHeight
+      mainBg.scrollTop = actual + 1
+    }, 100);
   }
 
-  const stateBgColor = (pubKey !== '' && connected) ? 'lightgreen' : "lightgrey"
+  function handleBgScroll(e) {
+    const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+    if (bottom) {
+      e.target.scrollTop = 0
+    }
+  }
+
+  const stateBgColor = (pubKey !== '' && connected) ? 'lightgreen' : "black"
+  let centerWidth = 100 * (ratio.height / ratio.width)
+  centerWidth = centerWidth > 95 ? 95 : centerWidth
   return (
     <div className="main-container">
+      <div className="black-bg"
+      style={{
+        backgroundColor:'black',
+        height: "100vh",
+        width: "100vw",
+        position: 'fixed',
+        zIndex: -1
+      }}
+      >
+
+      </div>
       <div className="main-bg"
-      id="main-bg"
+        id="main-bg"
+        onScroll={handleBgScroll}
         style={{
           width: "100vw",
+          height: "100vh",
           position: 'fixed',
           zIndex: -1,
-          opacity: 0.3
+          opacity: 0.5,
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: 'column',
         }}
       >
-        <img src={matrix} />
-        <img src={matrix} />
-        <img src={matrix} onLoad={handleSlide} />
+        <img
+          style={{ margin: 0, padding: 0 }}
+          src={matrix}
+          width="1920px"
+        />
+        <img
+          style={{ margin: 0, padding: 0 }}
+          width="1920px"
+          src={matrix} />
+        <img
+          style={{ margin: 0, padding: 0 }}
+          width="1920px"
+          src={matrix} onLoad={handleSlide} />
       </div>
 
       <div className="App"
         style={{
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
           alignItems: 'center',
-          zIndex: 2
+          zIndex: 2,
+          width: `${centerWidth}vw`,
+          height: "100vh",
+          margin: "0 auto",
         }}
       >
-        <div
+        {displayStatus && <div
           style={{
             top: 0,
             left: 0,
-            margin: 0,
             padding: 0,
-            width: "20vw",
+            width: `50vw`,
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-around',
-            backgroundColor: stateBgColor
+            backgroundColor: stateBgColor,
+            zIndex: 4,
+            position: 'fixed',
+            marginLeft: "25vw"
           }}
         >
           {pubKey === '' ?
@@ -250,7 +313,7 @@ function App() {
               fontSize: "calc(0.5vh + 0.5vw)"
             }}>Connected to server</p>
           }
-        </div>
+        </div>}
         <Router>
           <Switch>
             <Route exact path="/">
@@ -290,7 +353,6 @@ function App() {
                 userList={userList}
                 userColors={userColors}
                 isAdmin={isAdmin}
-                ratio={ratio}
               />
             </Route>
           </Switch>

@@ -189,7 +189,7 @@ function Room(params) {
                 onClick={() => handleMessageOptions(item.id)}
                 className="message">
                 <p>{item.sender} : </p>
-                <p style={{whiteSpace: "pre-wrap"}}>{item.msg}</p>
+                <p style={{ whiteSpace: "pre-wrap" }}>{item.msg}</p>
                 {(messageOptions.activated && messageOptions.id === item.id) &&
                     <button onClick={() => handleQuote(item)} >Quote</button>
                 }
@@ -199,8 +199,8 @@ function Room(params) {
 
     const typeAndSend = <div>
         <p>your message : </p>
-        <textarea 
-        style={{whiteSpace: "pre-wrap"}}
+        <textarea
+            style={{ whiteSpace: "pre-wrap" }}
             id="typing"
             name="typing"
             value={typing}
@@ -259,16 +259,11 @@ function Room(params) {
             </div>
         :
         null
-    let centerWidth = 90 * (params.ratio.height / params.ratio.width)
-    centerWidth = centerWidth > 95 ? 95 : centerWidth
-    console.log(messagesList)
     return (
         <div className="room-wrapper"
-        style={{width: `${centerWidth}vw`}}
         >
             {params.isAdmin && waitingUsers}
             <h1>Room name : {params.roomName}</h1>
-            <p>{centerWidth}</p>
             <div style={{
                 backgroundColor: "lightgray"
             }}>
