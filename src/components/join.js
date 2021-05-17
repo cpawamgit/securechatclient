@@ -1,13 +1,6 @@
 import React from "react";
 import {
-    HashRouter as Router,
-    Switch,
-    Route,
-    Link,
     Redirect,
-    useRouteMatch,
-    useLocation,
-    useParams
 } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -17,6 +10,7 @@ function Join(params) {
     const [redirect, setRedirect] = useState(false)
     const [waitingApproval, setWaitingApproval] = useState(false)
     const [accessDenied, setAccessDenied] = useState(false)
+    const [search, setSearch] = useState('')
 
 
     function handleJoin(roomName, roomAccess) {
@@ -30,6 +24,10 @@ function Join(params) {
 
     function handleChangePass(e) {
         params.setPassword(e.target.value);
+    }
+
+    function handleChangeSearch(e) {
+        setSearch(e.target.value)
     }
 
     function handleRequest() {
@@ -61,13 +59,18 @@ function Join(params) {
         })
     }, [])
     const rooms = roomList ? roomList.map((item) => {
-        return (
-            <button key={item.roomName}
-                onClick={() => handleJoin(item.roomName, item.roomAccess)}>
-                <p className="room-name-query">Roomname : {item.roomName}</p>
-                <p className="access-name-query">Access : {item.roomAccess}</p>
-            </button>
-        )
+        if (item.roomName.includes(search)){
+            return (
+                <button key={item.roomName}
+                    onClick={() => handleJoin(item.roomName, item.roomAccess)}>
+                    <p className="room-name-query">Roomname : {item.roomName}</p>
+                    <p className="access-name-query">Access : {item.roomAccess}</p>
+                </button>
+            )
+        } else {
+            return null
+        }
+        
     })
         :
         <p>loading...</p>
@@ -83,10 +86,41 @@ function Join(params) {
         ></input>
     </div>
 
+    let searchField = <div
+    style={{
+        position: "relative",
+        width: "100%",
+    }}
+    >
+        <p>Search for a room by name</p>
+        <input
+        style={{
+            position: "relative",
+            width: "100%"
+        }}
+        type="text"
+        id="search"
+        name="search"
+        value={search}
+        onChange={handleChangeSearch}
+        ></input>
+    </div>
+
     return roomList ? (
-        <div className="join-wrapper">
+        <div className="join-wrapper"
+        style={{
+            position: "relative",
+            width: "80%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            boxSizing: "border-box",
+            overflow: "scroll",
+            backgroundColor: "rgba(0,0,0,0.8)"
+        }}
+        >
             {redirect && <Redirect to="/room" />}
-            <h1>{rooms}</h1>
+            {searchField}
             {roomAccess === 'free' &&
                 <div>
                     {nickNameField}
@@ -140,6 +174,7 @@ function Join(params) {
                     </p>}
                 </div>
             }
+            {rooms}
         </div>
     )
         :

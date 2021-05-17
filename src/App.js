@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
@@ -6,18 +5,15 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Link,
-  Redirect,
-  useRouteMatch,
-  useLocation,
-  useParams
 } from "react-router-dom";
 import Home from "./components/home";
 import Create from "./components/create";
 import Join from "./components/join";
 import Room from "./components/room";
+import HowTo from "./components/howto";
 import colorList from './components/colors'
 import matrix from './matrix.jpg'
+import Title from './components/title';
 
 /////////////   SRV CONFIG    /////////////////////
 const localMode = true
@@ -226,15 +222,14 @@ function App() {
   return (
     <div className="main-container">
       <div className="black-bg"
-      style={{
-        backgroundColor:'black',
-        height: "100vh",
-        width: "100vw",
-        position: 'fixed',
-        zIndex: -1
-      }}
+        style={{
+          backgroundColor: 'black',
+          height: "100vh",
+          width: "100vw",
+          position: 'fixed',
+          zIndex: -1
+        }}
       >
-
       </div>
       <div className="main-bg"
         id="main-bg"
@@ -315,6 +310,7 @@ function App() {
           }
         </div>}
         <Router>
+        <Title/>
           <Switch>
             <Route exact path="/">
               <Home />
@@ -354,6 +350,9 @@ function App() {
                 userColors={userColors}
                 isAdmin={isAdmin}
               />
+            </Route>
+            <Route exact path="/howto">
+              <HowTo />
             </Route>
           </Switch>
         </Router>

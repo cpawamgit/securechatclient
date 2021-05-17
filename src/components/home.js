@@ -1,12 +1,5 @@
 import {
-    HashRouter as Router,
-    Switch,
-    Route,
     Link,
-    Redirect,
-    useRouteMatch,
-    useLocation,
-    useParams
 } from "react-router-dom";
 
 function Home(params) {
@@ -24,18 +17,23 @@ function Home(params) {
                     width: "100%",
                     display: "flex",
                     flexDirection: "column",
+                    alignItems: "center",
+                    position: "relative"
                 }}
             >
-                <Link to="/create"><button
-                style={{
-                    marginTop: "10vh"
-                }}
+                <Link 
+                className="home-link"
+                to="/create"><button    
                 className="home-buttons"
                 ><p>Create Room</p></button></Link>
-                <Link to="/join"><button
+                <Link 
+                className="home-link"
+                to="/join"><button
                 className="home-buttons"
                 ><p>Join Room</p></button></Link>
-                <Link to="/howto"><button
+                <Link 
+                className="home-link"
+                to="/howto"><button
                 className="home-buttons"
                 ><p>How does it work</p></button></Link>
             </div>

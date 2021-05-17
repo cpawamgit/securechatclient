@@ -1,5 +1,4 @@
 .App {
-  text-align: center;
 
   background-color: rgba(0, 255, 0, 0.164);
   box-shadow: 0 0 100px darkgreen;
@@ -21,20 +20,105 @@ img{
   border: none;
 }
 
-.home-buttons{
-  margin-top: 7vh;
+label{
+  color: lightgreen;
+  font-size: calc(1vh + 1vw);
+}
+
+input{
+  width: 100%;
+  box-sizing: border-box;
+}
+
+a{
+  text-decoration: none;
+}
+
+.home-link{
+  margin-top: 4vh;
   width: 80%;
-  height: 22vh;
+  height: 20vh;
   background-color: rgba(0, 0, 0, 0.8);
-  border: black solid 2px;
   box-shadow: 0 0 20px darkgreen;
   border-radius: 10px;
   border: darkgreen solid 2px;
+  position: relative;
+}
+
+.home-buttons{
+  background-color: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
 .home-buttons > p {
   color: lightgreen;
   font-size: calc(2vh + 2vw);
+}
+
+#title1, #title2, #title3, #title4, #title5, #title6,
+#howto1, #howto2, #howto3, #howto4, #howto5, #howto6{
+  animation-name: text-appear;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  opacity: 0;
+}
+
+#title1{
+  animation-delay: 0.5s;
+}
+
+#title2{
+  animation-delay: 1s;
+}
+
+#title3{
+  animation-delay: 1.5s;
+}
+
+#title4{
+  animation-delay: 2s;
+}
+
+#title5{
+  animation-delay: 2.5s;
+}
+
+#title6{
+  animation-delay: 3s;
+}
+
+#howto1{
+  animation-delay: 0s;
+}
+
+#howto2{
+  animation-delay: 2s;
+}
+
+#howto3{
+  animation-delay: 4s;
+}
+
+#howto4{
+  animation-delay: 6s;
+}
+
+#howto5{
+  animation-delay: 8s;
+}
+
+#howto6{
+  animation-delay: 10s;
+}
+
+@keyframes text-appear{
+  from{opacity: 0;}
+  to{opacity: 1;}
 }
 
 /********************************************************
@@ -43,13 +127,96 @@ img{
 
 ********************************************************/
 .create-wrapper{
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: rgba(0,0,0,0.8);
+  width: 80%;
+  height: 100%;
+  margin-top: 4vh;
+  margin-bottom: 4vh;
+  border-radius: 10px;
+  box-shadow: 0 0 20px darkgreen;
+  border: darkgreen solid 2px;
 }
 
 .creation-form{
   display: flex;
   flex-direction: column;
-  width: 50vw;
+  width: 100%;
+}
+
+.button-group > button{
+  background-color: transparent;
+  box-shadow: 0 0 20px darkgreen;
+  border-radius: 10px;
+  border: darkgreen solid 2px;
+  font-size: calc(1vh + 1vw);
+  color: lightgreen;
+}
+
+#password, #nickName, #roomName{
+  background-color: transparent;
+  box-shadow: 0 0 20px darkgreen;
+  border-radius: 10px;
+  border: darkgreen solid 2px;
+  font-size: calc(1vh + 1vw);
+  color: lightgreen;
+}
+
+/********************************************************
+
+                HOW TO
+
+********************************************************/
+
+.howto > p{
+  color: lightgreen;
+  padding-left: 2vw;
+  padding-right: 2vw;
+  padding-top: 3vh;
+  font-size: calc(0.75vh + 0.75vw);
+  line-height: 4vh;
+}
+
+.howto{
+  box-shadow: 0 0 20px darkgreen;
+  border-radius: 10px;
+  border: darkgreen solid 2px;
+}
+
+/********************************************************
+
+                JOIN
+
+********************************************************/
+/*
+::-webkit-scrollbar-button       
+::-webkit-scrollbar-track        
+::-webkit-scrollbar-track-piece  
+::-webkit-scrollbar-thumb        
+::-webkit-scrollbar-corner       
+::-webkit-resizer                */
+
+
+.join-wrapper::-webkit-scrollbar:vertical {
+  background-color: green;
+  width: 50px;
+}
+
+.join-wrapper::-webkit-scrollbar-button {
+  background-color: green;
+}
+
+.join-wrapper::-webkit-scrollbar-corner  {
+  background-color: green;
+}
+
+.join-wrapper::-webkit-scrollbar-track {
+  background-color: green;
+}
+
+.join-wrapper::-webkit-scrollbar-track-piece {
+  background-color: green;
 }

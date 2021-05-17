@@ -1,18 +1,11 @@
 import React, { useEffect } from "react";
 import {
-    HashRouter as Router,
-    Switch,
-    Route,
-    Link,
     Redirect,
-    useRouteMatch,
-    useLocation,
-    useParams
 } from "react-router-dom";
 import { useState } from "react";
 
 function Create(params) {
-    const [access, setAccess] = useState('request')
+    const [access, setAccess] = useState('password')
     const [redirect, setRedirect] = useState(false)
 
     function handleChangeNick(e) {
@@ -27,17 +20,17 @@ function Create(params) {
 
     function handleSubmit(e) {
         params.socket.emit('room creation', {
-                    roomName: params.roomName,
-                    roomUsers: [{
-                        nickName: params.nickName,
-                        id: params.socket.id,
-                        pubKey: params.exportedPublicKey
-                    }],
-                    roomAccess: access,
-                    roomPassword: params.password,
-                    roomOwner: params.socket.id,
-                    blockedUsers: []
-                })        
+            roomName: params.roomName,
+            roomUsers: [{
+                nickName: params.nickName,
+                id: params.socket.id,
+                pubKey: params.exportedPublicKey
+            }],
+            roomAccess: access,
+            roomPassword: params.password,
+            roomOwner: params.socket.id,
+            blockedUsers: []
+        })
         e.preventDefault();
     }
 
@@ -48,11 +41,25 @@ function Create(params) {
         })
     }, [])
 
-    let selected = { backgroundColor: "lightgreen" }
+    let selected = { backgroundColor: "darkgreen" }
     return (
         <div className="create-wrapper">
-            <div className="room-access-select">
-                <div className="button-group">
+            <div className="room-access-select"
+                style={{
+                    width: "100%"
+                }}
+            >
+                <div className="button-group"
+                    style={{
+                        width: "100%",
+                        height: "10vh",
+                        marginTop: "3vh",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                    }}
+                >
                     <button
                         onClick={() => setAccess('password')}
                         style={access === "password" ? selected : null}
@@ -71,38 +78,55 @@ function Create(params) {
                 </div>
             </div>
             <form
+                style={{
+                    width: "80%",
+                    height: "70%",
+                    marginTop: "5%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "space-around"
+                }}
                 className="creation-form"
                 onSubmit={handleSubmit}>
-                <label htmlFor="nickName">Enter your nickname here :</label>
+                <label htmlFor="nickName">Enter your nickname :</label>
                 <input type="text"
                     id="nickName"
                     name="nickName"
                     value={params.nickName}
                     onChange={handleChangeNick}
                     required
-                    ></input>
+                ></input>
 
-                <label htmlFor="roomName">Enter your room name here :</label>
+                <label htmlFor="roomName">Enter your room name :</label>
                 <input type="text"
                     id="roomName"
                     name="roomName"
                     value={params.roomName}
                     onChange={handleChangeRoom}
                     required
-                    ></input>
-                {access === "password" && <div 
-                style={{display: "flex", flexDirection: "column"}}>
-                <label htmlFor="password">Room password</label>
-                <input type="password"
+                ></input>
+                {access === "password" &&
+                    <label htmlFor="password">Enter the room password :</label>}
+                {access === "password" && <input type="password"
                     id="password"
                     name="password"
                     value={params.password}
                     onChange={handleChangePass}
                     required
-                    ></input>
-                    </div>}
+                ></input>}
+
                 <input type="hidden" value={params.id} name="id"></input>
-                <button type="submit">Create Room !</button>
+                <button
+                    style={{
+                        borderRadius: "10px",
+                        boxShadow: "0 0 20px darkgreen",
+                        border: "darkgreen solid 2px",
+                        backgroundColor: "transparent",
+                        color: "lightgreen",
+                        fontSize: "calc(1vh + 1vw)"
+                    }}
+                    type="submit">Create Room !</button>
             </form>
             {redirect && <Redirect to="/room" />}
         </div>

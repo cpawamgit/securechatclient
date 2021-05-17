@@ -1,15 +1,5 @@
-import React, { useCallback } from "react";
-import {
-    HashRouter as Router,
-    Switch,
-    Route,
-    Link,
-    Redirect,
-    useRouteMatch,
-    useLocation,
-    useParams
-} from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid';
 
 function Room(params) {
