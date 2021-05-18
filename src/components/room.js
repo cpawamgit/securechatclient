@@ -251,16 +251,41 @@ function Room(params) {
         null
     return (
         <div className="room-wrapper"
+            style={{
+                backgroundColor: "rgba(0,0,0,0.8)",
+                width: "80%",
+                height: "100%",
+                marginTop: "4vh",
+                marginBottom: "4vh",
+                borderRadius: "10px",
+                boxShadow: "0 0 20px darkgreen",
+                border: "darkgreen solid 2px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-around",
+                position: "relative"
+            }}
         >
-            {params.isAdmin && waitingUsers}
             <h1>Room name : {params.roomName}</h1>
-            <div style={{
-                backgroundColor: "lightgray"
-            }}>
+                <div
+                style={{
+                    width: "90%",
+                    height: "90%",
+                    backgroundColor: "blue"
+                }}
+                >
                 {msgDisplayer}
                 {typeAndSend}
-                {users}
-            </div>
+                </div>
+                <div
+                style={{
+                    backgroundColor: "red"
+                }}
+                >
+                    {params.isAdmin && waitingUsers}
+                    {users}
+                </div>
             {pendingRequest !== null && confirmButtons}
         </div>
     )
