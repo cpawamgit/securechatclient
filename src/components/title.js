@@ -14,7 +14,7 @@ const lowstyle = {
 const wordstyle = {
     display: "flex",
     flexDirection: "row",
-    alignItems: "end"
+    alignItems: "flex-end"
 }
 
 

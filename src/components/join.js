@@ -11,11 +11,13 @@ function Join(params) {
     const [waitingApproval, setWaitingApproval] = useState(false)
     const [accessDenied, setAccessDenied] = useState(false)
     const [search, setSearch] = useState('')
+    const [awaitingInfo, setAwaitingInfo] = useState(false)
 
 
     function handleJoin(roomName, roomAccess) {
         setRoomAccess(roomAccess)
         params.setRoomName(roomName)
+        setAwaitingInfo(true)
     }
 
     function handleChangeNick(e) {
@@ -59,9 +61,15 @@ function Join(params) {
         })
     }, [])
     const rooms = roomList ? roomList.map((item) => {
-        if (item.roomName.includes(search)){
+        if (item.roomName.includes(search)) {
             return (
                 <button key={item.roomName}
+                    className="styled-button"
+                    style={{
+                        width: "100%",
+                        fontSize: "calc(0.75vh + 0.75vw)",
+                        marginBottom: "1vh"
+                    }}
                     onClick={() => handleJoin(item.roomName, item.roomAccess)}>
                     <p className="room-name-query">Roomname : {item.roomName}</p>
                     <p className="access-name-query">Access : {item.roomAccess}</p>
@@ -70,13 +78,13 @@ function Join(params) {
         } else {
             return null
         }
-        
+
     })
         :
         <p>loading...</p>
 
     const nickNameField = <div>
-        <label htmlFor="nickName">Enter your nickname here :</label>
+        <label htmlFor="nickName">Enter your nickname :</label>
         <input type="text"
             id="nickName"
             name="nickName"
@@ -87,94 +95,183 @@ function Join(params) {
     </div>
 
     let searchField = <div
-    style={{
-        position: "relative",
-        width: "100%",
-    }}
-    >
-        <p>Search for a room by name</p>
-        <input
         style={{
             position: "relative",
-            width: "100%"
+            width: "90%",
+            height: "10%",
+            marginTop: "3vh",
+            marginBottom: "2vh",
         }}
-        type="text"
-        id="search"
-        name="search"
-        value={search}
-        onChange={handleChangeSearch}
+    >
+        <p
+            style={{
+                color: "lightgreen",
+                fontSize: "calc(1vh + 1vw)"
+            }}
+        >Search for a room by name :</p>
+        <input
+            style={{
+                position: "relative",
+
+            }}
+            type="text"
+            id="search"
+            name="search"
+            value={search}
+            onChange={handleChangeSearch}
         ></input>
     </div>
 
     return roomList ? (
         <div className="join-wrapper"
-        style={{
-            position: "relative",
-            width: "80%",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            boxSizing: "border-box",
-            overflow: "scroll",
-            backgroundColor: "rgba(0,0,0,0.8)"
-        }}
+            style={{
+                position: "relative",
+                width: "80%",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                backgroundColor: "rgba(0,0,0,0.8)",
+                marginTop: "4vh",
+                marginBottom: "4vh",
+                borderRadius: "10px",
+                overflow: "hidden"
+            }}
         >
             {redirect && <Redirect to="/room" />}
             {searchField}
-            {roomAccess === 'free' &&
-                <div>
-                    {nickNameField}
-                    <button onClick={() => params.socket.emit('enter room free',
-                        {
-                            roomName: params.roomName,
-                            nickName: params.nickName,
-                            id: params.socket.id,
-                            pubKey: params.exportedPublicKey
-                        })}>
-                        Enter Room
+            {awaitingInfo && <div
+                style={{
+                    width: "90%",
+                    height: "60%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    marginTop: "10%"
+                }}
+            >
+                {roomAccess === 'free' &&
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-around",
+                            height: "100%",
+                            width: "100%",
+                        }}
+                    >
+                        {nickNameField}
+                        <div
+                            className="back-enter"
+                        >
+                            <button
+                                className="styled-button"
+                                onClick={() => params.socket.emit('enter room free',
+                                    {
+                                        roomName: params.roomName,
+                                        nickName: params.nickName,
+                                        id: params.socket.id,
+                                        pubKey: params.exportedPublicKey
+                                    })}>
+                                Enter Room
                         </button>
-                </div>
-            }
-            {roomAccess === 'password' &&
-                <div>
-                    {nickNameField}
-                    <div>
-                        <label htmlFor="password">Enter the room password :</label>
-                        <input type="text"
-                            id="password"
-                            name="password"
-                            value={params.password}
-                            onChange={handleChangePass}
-                            required
-                        ></input>
+                            <button
+                                className="styled-button"
+                                onClick={() => setAwaitingInfo(false)}
+                            >Back to list</button>
+                        </div>
                     </div>
-                    <button onClick={() => params.socket.emit('enter room password',
-                        {
-                            roomName: params.roomName,
-                            nickName: params.nickName,
-                            id: params.socket.id,
-                            pubKey: params.exportedPublicKey,
-                            password: params.password
-                        })}>
-                        Enter Room
+                }
+                {roomAccess === 'password' &&
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-around",
+                            height: "100%",
+                            width: "100%",
+                        }}
+                    >
+                        {nickNameField}
+                        <div>
+                            <label htmlFor="password">Enter the room password :</label>
+                            <input type="text"
+                                id="password"
+                                name="password"
+                                value={params.password}
+                                onChange={handleChangePass}
+                                required
+                            ></input>
+                        </div>
+                        <div
+                            className="back-enter"
+                        >
+                            <button
+                                className="styled-button"
+                                onClick={() => params.socket.emit('enter room password',
+                                    {
+                                        roomName: params.roomName,
+                                        nickName: params.nickName,
+                                        id: params.socket.id,
+                                        pubKey: params.exportedPublicKey,
+                                        password: params.password
+                                    })}>
+                                Enter Room
                         </button>
-                </div>
-            }
-            {roomAccess === 'request' &&
-                <div>
-                    {nickNameField}
-                    <button onClick={handleRequest}>
-                        Enter Room
+                            <button
+                                className="styled-button"
+                                onClick={() => setAwaitingInfo(false)}
+                            >Back to list</button>
+                        </div>
+                    </div>
+                }
+                {roomAccess === 'request' &&
+                    <div
+                        style={{
+                            height: "100%",
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "space-around",
+                        }}
+                    >
+                        {nickNameField}
+                        <div
+                            className="back-enter"
+                        >
+                            <button
+                                className="styled-button"
+                                onClick={handleRequest}>
+                                Enter Room
                     </button>
-                    {waitingApproval && <p style={{ color: "darkgreen" }}>
-                        Waiting for room admin to approve
+                            <button
+                                className="styled-button"
+                                onClick={() => setAwaitingInfo(false)}
+                            >Back to list</button>
+                        </div>
+                        {waitingApproval && <p style={{ color: "darkgreen" }}>
+                            Waiting for room admin to approve
                         </p>}
-                    {accessDenied !== null && <p style={{ color: "darkred" }}>
-                        {accessDenied}
-                    </p>}
-                </div>
-            }
-            {rooms}
+                        {accessDenied !== null && <p style={{ color: "darkred" }}>
+                            {accessDenied}
+                        </p>}
+                    </div>
+                }
+            </div>}
+            {!awaitingInfo && <div
+                style={{
+                    width: "90%",
+                    height: "80%",
+                    position: "relative",
+                    overflow: "hidden",
+                }}
+            >
+                {rooms}
+            </div>}
         </div>
     )
         :
