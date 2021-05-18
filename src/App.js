@@ -50,6 +50,8 @@ function App() {
     height: document.documentElement.clientHeight,
   })
   const [displayStatus, setDisplayStatus] = useState(true)
+  const [popUp, setPopUp] = useState(false)
+
 
   function refreshRatio() {
     setRatio({
@@ -310,7 +312,11 @@ function App() {
           }
         </div>}
         <Router>
-        <Title/>
+          <Title
+            socket={actualSocket}
+            popUp={popUp}
+            setPopUp={setPopUp}
+          />
           <Switch>
             <Route exact path="/">
               <Home />

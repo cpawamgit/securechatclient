@@ -112,7 +112,7 @@ function Join(params) {
         <input
             style={{
                 position: "relative",
-
+                marginTop: "1vh"
             }}
             type="text"
             id="search"
@@ -135,7 +135,9 @@ function Join(params) {
                 marginTop: "4vh",
                 marginBottom: "4vh",
                 borderRadius: "10px",
-                overflow: "hidden"
+                overflow: "hidden",
+                boxShadow: "0 0 20px darkgreen",
+                border: "darkgreen solid 2px"
             }}
         >
             {redirect && <Redirect to="/room" />}

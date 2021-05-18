@@ -1,4 +1,5 @@
-import { useHistory } from "react-router-dom";
+import { useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 
 const capstyle = {
     color: 'lightgreen',
@@ -18,102 +19,161 @@ const wordstyle = {
 }
 
 
-function Title() {
+function Title(params) {
 
     let history = useHistory()
-    
-    function handleClickHome() {
-        history.push("/");
-      }
+    let location = useLocation();
 
-    return(
-        <div 
-    onClick={handleClickHome}
-    className="title"
-        style={{
-            display: "flex",
-            flexDirection: "row",
-            marginTop: "3vh",
-            marginBottom: 0,
-            padding: 0,
-            alignItems: "end",
-            justifyContent: "space-around",
-            width: "80%",
-            backgroundColor: "rgba(0,0,0,0.8)",
-            borderRadius: "10px",
-            border: "darkgreen solid 2px",
-            boxShadow: "0 0 20px darkgreen"
-}}
-    >
+    function handleBack() {
+        params.socket.emit('leave room')
+        params.setPopUp(false)
+        window.location.href = "/"
+    }
+
+
+    function handleClickHome() {
+        if (location.pathname === '/room') {
+            if (!params.popUp) {
+                params.setPopUp(true)
+            }
+        } else {
+            history.push("/");
+        }
+    }
+
+    function killPopUp() {
+        params.setPopUp(false)
+    }
+
+    const popUpDiv =
         <div
-            style={wordstyle}
+            style={{
+                width: "100vw",
+                height: "100vh",
+                position: "fixed",
+                top: 0,
+                left: 0,
+                zIndex: 5,
+                backgroundColor: "rgba(0,0,0,0.8)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center"
+            }}
         >
             <p
-                style={capstyle}
-            >F</p>
-            <p
-                style={lowstyle}
-                id="title1"
-            >ree</p>
+                style={{
+                    color: "lightgreen",
+                    fontSize: "calc(1vh + 1vw)",
+                    marginBottom: "3vh"
+                }}
+            >Do you really want to leave the room ?</p>
+            <div
+            style={{
+                width: "20vw",
+                display: "flex",
+                justifyContent: "space-around"
+            }}
+            >
+                <button
+                    onClick={handleBack}
+                    className="styled-button"
+                >Yes</button>
+                <button
+                    onClick={killPopUp}
+                    className="styled-button"
+                >No</button>
+            </div>
         </div>
+    return (
         <div
-            style={wordstyle}
+            onClick={handleClickHome}
+            className="title"
+            style={{
+                display: "flex",
+                flexDirection: "row",
+                marginTop: "3vh",
+                marginBottom: 0,
+                padding: 0,
+                alignItems: "end",
+                justifyContent: "space-around",
+                width: "80%",
+                backgroundColor: "rgba(0,0,0,0.8)",
+                borderRadius: "10px",
+                border: "darkgreen solid 2px",
+                boxShadow: "0 0 20px darkgreen"
+            }}
         >
-            <p
-                style={capstyle}
-            >O</p>
-            <p
-                style={lowstyle}
-                id="title2"
-            >pen</p>
-        </div>
-        <div
-            style={wordstyle}
-        >
-            <p
-                style={capstyle}
-            >S</p>
-            <p
-                style={lowstyle}
-                id="title3"
-            >ource</p>
-        </div>
-        <div
-            style={wordstyle}
-        >
-            <p
-                style={capstyle}
-            >S</p>
-            <p
-                style={lowstyle}
-                id="title4"
-            >ecured</p>
-        </div>
-        <div
-            style={wordstyle}
-        >
-            <p
-                style={capstyle}
-            >C</p>
-            <p
-                style={lowstyle}
-                id="title5"
-            >hat</p>
-        </div>
-        <div
-            style={wordstyle}
-        >
-            <p
-                style={capstyle}
-            >A</p>
-            <p
-                style={lowstyle}
-                id="title6"
-            >pp</p>
-        </div>
-    </div >
+            {params.popUp && popUpDiv}
+            <div
+                style={wordstyle}
+            >
+                <p
+                    style={capstyle}
+                >F</p>
+                <p
+                    style={lowstyle}
+                    id="title1"
+                >ree</p>
+            </div>
+            <div
+                style={wordstyle}
+            >
+                <p
+                    style={capstyle}
+                >O</p>
+                <p
+                    style={lowstyle}
+                    id="title2"
+                >pen</p>
+            </div>
+            <div
+                style={wordstyle}
+            >
+                <p
+                    style={capstyle}
+                >S</p>
+                <p
+                    style={lowstyle}
+                    id="title3"
+                >ource</p>
+            </div>
+            <div
+                style={wordstyle}
+            >
+                <p
+                    style={capstyle}
+                >S</p>
+                <p
+                    style={lowstyle}
+                    id="title4"
+                >ecured</p>
+            </div>
+            <div
+                style={wordstyle}
+            >
+                <p
+                    style={capstyle}
+                >C</p>
+                <p
+                    style={lowstyle}
+                    id="title5"
+                >hat</p>
+            </div>
+            <div
+                style={wordstyle}
+            >
+                <p
+                    style={capstyle}
+                >A</p>
+                <p
+                    style={lowstyle}
+                    id="title6"
+                >pp</p>
+            </div>
+        </div >
     )
 }
-    
+
 
 export default Title;
