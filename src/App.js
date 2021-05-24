@@ -270,7 +270,7 @@ function App() {
           zIndex: 2,
           width: `${centerWidth}vw`,
           height: "100vh",
-          margin: "0 auto",
+          margin: "0 auto"
         }}
       >
         {displayStatus && <div
@@ -316,6 +316,7 @@ function App() {
             socket={actualSocket}
             popUp={popUp}
             setPopUp={setPopUp}
+            ratio={ratio}
           />
           <Switch>
             <Route exact path="/">
@@ -331,6 +332,7 @@ function App() {
                 password={password}
                 setPassword={setPassword}
                 setIsAdmin={setIsAdmin}
+                ratio={ratio}
               />
             </Route>
             <Route exact path="/join">
@@ -343,6 +345,7 @@ function App() {
                 setIsAdmin={setIsAdmin}
                 password={password}
                 setPassword={setPassword}
+                ratio={ratio}
               />
             </Route>
             <Route exact path="/room">
@@ -355,10 +358,13 @@ function App() {
                 userList={userList}
                 userColors={userColors}
                 isAdmin={isAdmin}
+                ratio={ratio}
               />
             </Route>
             <Route exact path="/howto">
-              <HowTo />
+              <HowTo
+                ratio={ratio}
+              />
             </Route>
           </Switch>
         </Router>

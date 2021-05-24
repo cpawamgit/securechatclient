@@ -11,6 +11,7 @@ function Room(params) {
         activated: false,
         id: null
     })
+    const [displayWindow, setDisplayedWindow] = useState('chat')
 
     function sendMessageIfEnter(e) {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -165,15 +166,35 @@ function Room(params) {
         })
     }, [])
 
+    useEffect(() => {
+        let elem = document.getElementById("msg-displayer")
+        if (elem) {
+            console.log("in")
+            elem.scrollTop = elem.scrollTop + 1000
+        }
+    }, [messagesList])
+
 
     const messages = messagesList.map((item) => {
         let user = params.userColors.find((usr) => usr.nickName === item.sender)
         if (!user) {
-            user = { color: "white" }
+            user = { color: "lightgreen" }
         }
         let generatedId = uuidv4()
         return (
-            <div style={{ backgroundColor: user.color, width: "max-content" }}
+            <div style={{
+                backgroundColor: user.color,
+                width: "max-content",
+                maxWidth: "80%",
+                wordBreak: "break-word",
+                boxShadow: "0 0 20px darkgreen",
+                borderRadius: "10px",
+                border: "darkgreen solid 2px",
+                marginTop: "1vh",
+                marginBottom: "1vh",
+                padding: "0.5vh 0.5vw 0.5vh 0.5vw",
+                fontSize: "calc(0.75vh + 0.75vw)"
+            }}
                 key={generatedId}
                 id={generatedId}
                 onClick={() => handleMessageOptions(item.id)}
@@ -187,22 +208,40 @@ function Room(params) {
         )
     })
 
-    const typeAndSend = <div>
-        <p>your message : </p>
+    const typeAndSend = <div
+        style={{
+            display: "flex",
+            flexDirection: "row",
+            position: "relative",
+            height: "100%",
+        }}
+    >
         <textarea
-            style={{ whiteSpace: "pre-wrap" }}
+            style={{
+                whiteSpace: "pre-wrap",
+                height: "100%",
+                maxHeight: "100%",
+                width: "100%",
+                fontSize: "calc(0.75vh + 0.75vw)",
+                resize: "none",
+                boxSizing: "border-box",
+                backgroundColor: "transparent",
+                boxShadow: "0 0 20px darkgreen",
+                borderRadius: "10px",
+                border: "darkgreen solid 2px",
+                color: "lightgreen"
+            }}
+            autoFocus
             id="typing"
             name="typing"
             value={typing}
             onChange={handleChangeTyping} onKeyDown={sendMessageIfEnter}></textarea>
-        <button onClick={sendMessage}>Enter</button>
+        {/*<button onClick={sendMessage}>Enter</button>*/}
     </div>
 
     const msgDisplayer = <div className="msg-displayer">
         <div className="messages">
-            <ul>
-                {messages}
-            </ul>
+            {messages}
         </div>
     </div>
 
@@ -249,12 +288,50 @@ function Room(params) {
             </div>
         :
         null
+
+    const windowSelector =
+        <div
+            style={{
+                height: "5%",
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-around",
+                marginTop: "0.5%",
+                marginBottom: "0.5%"
+            }}
+        >
+            <button
+                onClick={() => setDisplayedWindow("chat")}
+                className="styled-button"
+                style={{
+                    fontSize: "calc(0.75vh + 0.75vw)"
+                }}
+            >Messages</button>
+            <button
+                onClick={() => setDisplayedWindow("users")}
+                className="styled-button"
+                style={{
+                    fontSize: "calc(0.75vh + 0.75vw)"
+                }}
+            >Users</button>
+            {params.isAdmin && <button
+                onClick={() => setDisplayedWindow("requests")}
+                className="styled-button"
+                style={{
+                    fontSize: "calc(0.75vh + 0.75vw)"
+                }}
+            >Requests</button>}
+        </div>
+
+    const width = params.ratio.width > 600 ? "80%" : "100%"
+
     return (
         <div className="room-wrapper"
+
             style={{
                 backgroundColor: "rgba(0,0,0,0.8)",
-                width: "80%",
-                height: "100%",
+                width: width,
+                height: "80vh",
                 marginTop: "4vh",
                 marginBottom: "4vh",
                 borderRadius: "10px",
@@ -263,29 +340,59 @@ function Room(params) {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                justifyContent: "space-around",
-                position: "relative"
+                position: "relative",
             }}
         >
-            <h1>Room name : {params.roomName}</h1>
-                <div
+            <p
+                style={{
+                    color: "lightgreen",
+                    fontSize: "calc(0.75vh + 0.75vw)",
+                    margin: 0,
+                    padding: 0,
+                    marginTop: "0.5%",
+                    marginBottom: "0.5%"
+                }}
+            >Room name : {params.roomName}</p>
+            {windowSelector}
+            {displayWindow === "chat" && <div
                 style={{
                     width: "90%",
-                    height: "90%",
-                    backgroundColor: "blue"
+                    height: "85%",
+                    maxHeight: "85%",
+                    position: "relative",
                 }}
+            >
+                <div
+                    id="msg-displayer"
+                    style={{
+                        height: "84%",
+                        width: "100%",
+                        overflow: "auto",
+                        scrollbarColor: "darkgreen lightgreen",
+                        overflowX: "hidden",
+                        scrollbarWidth: "thin",
+                        marginTop: "1%"
+                    }}
                 >
-                {msgDisplayer}
-                {typeAndSend}
+                    {msgDisplayer}
                 </div>
                 <div
-                style={{
-                    backgroundColor: "red"
-                }}
+                    style={{
+                        height: "13%",
+                        marginTop: "1%",
+                    }}
                 >
-                    {params.isAdmin && waitingUsers}
-                    {users}
+                    {typeAndSend}
                 </div>
+            </div>}
+            <div
+                style={{
+                    backgroundColor: "red",
+                }}
+            >
+                {(params.isAdmin && displayWindow === "requests") && waitingUsers}
+                {displayWindow === "users" && users}
+            </div>
             {pendingRequest !== null && confirmButtons}
         </div>
     )

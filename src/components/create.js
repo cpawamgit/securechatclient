@@ -42,8 +42,14 @@ function Create(params) {
     }, [])
 
     let selected = { backgroundColor: "darkgreen" }
+    const width = params.ratio.width > 600 ? "80%" : "100%"
+
     return (
-        <div className="create-wrapper">
+        <div className="create-wrapper"
+        style={{
+            width: width
+        }}
+        >
             <div className="room-access-select"
                 style={{
                     width: "100%"

@@ -45,6 +45,8 @@ function Title(params) {
         params.setPopUp(false)
     }
 
+    const width = params.ratio.width > 600 ? "80%" : "100%"
+
     const popUpDiv =
         <div
             style={{
@@ -97,7 +99,7 @@ function Title(params) {
                 padding: 0,
                 alignItems: "end",
                 justifyContent: "space-around",
-                width: "80%",
+                width: width,
                 backgroundColor: "rgba(0,0,0,0.8)",
                 borderRadius: "10px",
                 border: "darkgreen solid 2px",

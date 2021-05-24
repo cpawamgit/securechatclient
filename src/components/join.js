@@ -117,16 +117,19 @@ function Join(params) {
             type="text"
             id="search"
             name="search"
+            autoFocus
             value={search}
             onChange={handleChangeSearch}
         ></input>
     </div>
 
+    const width = params.ratio.width > 600 ? "80%" : "100%"
+
     return roomList ? (
         <div className="join-wrapper"
             style={{
                 position: "relative",
-                width: "80%",
+                width: width,
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
