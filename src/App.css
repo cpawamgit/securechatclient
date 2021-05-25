@@ -216,3 +216,21 @@ a{
   flex-direction: row;
   justify-content: space-around;
 }
+
+/********************************************************
+
+                Room
+
+********************************************************/
+
+.message{
+  animation-name: message-appear;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    opacity: 0;
+}
+
+@keyframes message-appear{
+  from{opacity: 0;}
+  to{opacity: 1;}
+}

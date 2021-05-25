@@ -13,15 +13,6 @@ function Room(params) {
     })
     const [displayWindow, setDisplayedWindow] = useState('chat')
 
-    function sendMessageIfEnter(e) {
-        if (e.key === "Enter" && !e.shiftKey) {
-            sendMessage()
-            e.preventDefault()
-        } else {
-            return
-        }
-    }
-
     function handleQuote(msg) {
         setTyping(
             `${msg.sender} said :\n"${msg.msg}"\n\n`
@@ -44,7 +35,7 @@ function Room(params) {
         }
     }
 
-    async function encryptMsgs() {
+    async function encryptMsgs(msg) {
         const lst = params.userList.reduce((acc, item) => {
             if (item.nickName !== params.nickName) {
                 const tmp = {
@@ -57,7 +48,7 @@ function Room(params) {
         }, [])
         const msgs = await Promise.all(lst.map(async (item) => {
             let encoder = new TextEncoder()
-            let encodedMsg = encoder.encode(typing)
+            let encodedMsg = encoder.encode(msg)
             const encrypedMsg = await window.crypto.subtle.encrypt(
                 {
                     name: "RSA-OAEP"
@@ -73,21 +64,21 @@ function Room(params) {
         return msgs;
     }
 
-    async function sendMessage() {
-        const encryptedMsgs = await encryptMsgs()
+    function handleSend(msg) {
+        sendMessage(msg)
+    }
+
+    async function sendMessage(msg) {
+        const encryptedMsgs = await encryptMsgs(msg)
         params.socket.emit('chat message sent',
             { msg: encryptedMsgs, sender: params.nickName, roomName: params.roomName })
         setMessagesList((prev) => {
             const tmp = [...prev]
             let id = uuidv4()
-            tmp.push({ sender: "You", msg: typing, id: id })
+            tmp.push({ sender: "You", msg: msg, id: id })
             return ([...tmp])
         })
         setTyping('');
-    }
-
-    function handleChangeTyping(e) {
-        setTyping(e.target.value)
     }
 
     function handlePendingRequest(user, decision) {
@@ -207,37 +198,6 @@ function Room(params) {
             </div>
         )
     })
-
-    const typeAndSend = <div
-        style={{
-            display: "flex",
-            flexDirection: "row",
-            position: "relative",
-            height: "100%",
-        }}
-    >
-        <textarea
-            style={{
-                whiteSpace: "pre-wrap",
-                height: "100%",
-                maxHeight: "100%",
-                width: "100%",
-                fontSize: "calc(0.75vh + 0.75vw)",
-                resize: "none",
-                boxSizing: "border-box",
-                backgroundColor: "transparent",
-                boxShadow: "0 0 20px darkgreen",
-                borderRadius: "10px",
-                border: "darkgreen solid 2px",
-                color: "lightgreen"
-            }}
-            autoFocus
-            id="typing"
-            name="typing"
-            value={typing}
-            onChange={handleChangeTyping} onKeyDown={sendMessageIfEnter}></textarea>
-        {/*<button onClick={sendMessage}>Enter</button>*/}
-    </div>
 
     const msgDisplayer = <div className="msg-displayer">
         <div className="messages">
@@ -382,7 +342,10 @@ function Room(params) {
                         marginTop: "1%",
                     }}
                 >
-                    {typeAndSend}
+                    <TypeAndSend
+                    handleSend={handleSend}
+                    typing={typing}
+                    />
                 </div>
             </div>}
             <div
@@ -395,6 +358,65 @@ function Room(params) {
             </div>
             {pendingRequest !== null && confirmButtons}
         </div>
+    )
+}
+
+function TypeAndSend(params) {
+    const [typing2, setTyping2] = useState(params.typing);
+    
+
+    function handleChangeTyping(e) {
+        setTyping2(e.target.value)
+    }
+
+    function sendMessageIfEnter(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            params.handleSend(typing2)
+            setTyping2('')
+            e.preventDefault()
+        } else {
+            return
+        }
+    }
+
+    useEffect(() => {
+        if (params.typing !== ''){
+            setTyping2(params.typing)
+        }
+    }, [params.typing])
+
+    return(
+        <div
+        style={{
+            display: "flex",
+            flexDirection: "row",
+            position: "relative",
+            height: "100%",
+        }}
+    >
+        <textarea
+            style={{
+                whiteSpace: "pre-wrap",
+                height: "100%",
+                maxHeight: "100%",
+                width: "100%",
+                fontSize: "calc(0.75vh + 0.75vw)",
+                resize: "none",
+                boxSizing: "border-box",
+                backgroundColor: "transparent",
+                boxShadow: "0 0 20px darkgreen",
+                borderRadius: "10px",
+                border: "darkgreen solid 2px",
+                color: "lightgreen"
+            }}
+            autoFocus
+            id="typing"
+            name="typing"
+            value={typing2}
+            onChange={handleChangeTyping} 
+            onKeyDown={sendMessageIfEnter}></textarea>
+        {/*<button onClick={sendMessage}>Enter</button>*/}
+    </div>
     )
 }
 
