@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid';
+import {
+    CSSTransition,
+    TransitionGroup,
+} from 'react-transition-group';
 
 function Room(params) {
     const [messagesList, setMessagesList] = useState([]);
@@ -23,6 +27,7 @@ function Room(params) {
 
     function handleMessageOptions(id) {
         if (messageOptions.activated && id === messageOptions.id) {
+            console.log("case if")
             setMessageOptions({
                 activated: false,
                 id: null
@@ -160,50 +165,9 @@ function Room(params) {
     useEffect(() => {
         let elem = document.getElementById("msg-displayer")
         if (elem) {
-            console.log("in")
             elem.scrollTop = elem.scrollTop + 1000
         }
     }, [messagesList])
-
-
-    const messages = messagesList.map((item) => {
-        let user = params.userColors.find((usr) => usr.nickName === item.sender)
-        if (!user) {
-            user = { color: "lightgreen" }
-        }
-        let generatedId = uuidv4()
-        return (
-            <div style={{
-                backgroundColor: user.color,
-                width: "max-content",
-                maxWidth: "80%",
-                wordBreak: "break-word",
-                boxShadow: "0 0 20px darkgreen",
-                borderRadius: "10px",
-                border: "darkgreen solid 2px",
-                marginTop: "1vh",
-                marginBottom: "1vh",
-                padding: "0.5vh 0.5vw 0.5vh 0.5vw",
-                fontSize: "calc(0.75vh + 0.75vw)"
-            }}
-                key={generatedId}
-                id={generatedId}
-                onClick={() => handleMessageOptions(item.id)}
-                className="message">
-                <p>{item.sender} : </p>
-                <p style={{ whiteSpace: "pre-wrap" }}>{item.msg}</p>
-                {(messageOptions.activated && messageOptions.id === item.id) &&
-                    <button onClick={() => handleQuote(item)} >Quote</button>
-                }
-            </div>
-        )
-    })
-
-    const msgDisplayer = <div className="msg-displayer">
-        <div className="messages">
-            {messages}
-        </div>
-    </div>
 
     const users = buildList()
     const waitingUsers = <div>
@@ -334,7 +298,56 @@ function Room(params) {
                         marginTop: "1%"
                     }}
                 >
-                    {msgDisplayer}
+                    {/* <TransitionGroup className="toto">
+                        {styledMsgs.map((item) => {
+                           return (<CSSTransition
+                                classNames="msg-anim"
+                                key={item.id}
+                                timeout={500}
+                            >
+                                {item.msg}
+                            </CSSTransition>)
+                        })}
+                    </TransitionGroup> */}
+                    <TransitionGroup className="toto">
+                    {messagesList.map((item) => {
+        let user = params.userColors.find((usr) => usr.nickName === item.sender)
+        if (!user) {
+            user = { color: "lightgreen" }
+        }
+        return (
+            <CSSTransition
+                                classNames="msg-anim"
+                                key={item.id}
+                                timeout={500}
+                                >
+            <div style={{
+                backgroundColor: user.color,
+                width: "max-content",
+                maxWidth: "80%",
+                wordBreak: "break-word",
+                boxShadow: "0 0 20px darkgreen",
+                borderRadius: "10px",
+                border: "darkgreen solid 2px",
+                marginTop: "1vh",
+                marginBottom: "1vh",
+                padding: "0.5vh 0.5vw 0.5vh 0.5vw",
+                fontSize: "calc(0.75vh + 0.75vw)"
+            }}
+                id={item.id}
+                key={`in${item.id}`}
+                onClick={() => handleMessageOptions(item.id)}
+                className="message">
+                <p>{item.sender} : </p>
+                <p style={{ whiteSpace: "pre-wrap" }}>{item.msg}</p>
+                {(messageOptions.activated && messageOptions.id === item.id) &&
+                    <button onClick={() => handleQuote(item)} >Quote</button>
+                }
+            </div>
+            </CSSTransition>
+        )
+    })}
+    </TransitionGroup>
                 </div>
                 <div
                     style={{
@@ -343,8 +356,8 @@ function Room(params) {
                     }}
                 >
                     <TypeAndSend
-                    handleSend={handleSend}
-                    typing={typing}
+                        handleSend={handleSend}
+                        typing={typing}
                     />
                 </div>
             </div>}
@@ -363,7 +376,7 @@ function Room(params) {
 
 function TypeAndSend(params) {
     const [typing2, setTyping2] = useState(params.typing);
-    
+
 
     function handleChangeTyping(e) {
         setTyping2(e.target.value)
@@ -380,43 +393,43 @@ function TypeAndSend(params) {
     }
 
     useEffect(() => {
-        if (params.typing !== ''){
+        if (params.typing !== '') {
             setTyping2(params.typing)
         }
     }, [params.typing])
 
-    return(
+    return (
         <div
-        style={{
-            display: "flex",
-            flexDirection: "row",
-            position: "relative",
-            height: "100%",
-        }}
-    >
-        <textarea
             style={{
-                whiteSpace: "pre-wrap",
+                display: "flex",
+                flexDirection: "row",
+                position: "relative",
                 height: "100%",
-                maxHeight: "100%",
-                width: "100%",
-                fontSize: "calc(0.75vh + 0.75vw)",
-                resize: "none",
-                boxSizing: "border-box",
-                backgroundColor: "transparent",
-                boxShadow: "0 0 20px darkgreen",
-                borderRadius: "10px",
-                border: "darkgreen solid 2px",
-                color: "lightgreen"
             }}
-            autoFocus
-            id="typing"
-            name="typing"
-            value={typing2}
-            onChange={handleChangeTyping} 
-            onKeyDown={sendMessageIfEnter}></textarea>
-        {/*<button onClick={sendMessage}>Enter</button>*/}
-    </div>
+        >
+            <textarea
+                style={{
+                    whiteSpace: "pre-wrap",
+                    height: "100%",
+                    maxHeight: "100%",
+                    width: "100%",
+                    fontSize: "calc(0.75vh + 0.75vw)",
+                    resize: "none",
+                    boxSizing: "border-box",
+                    backgroundColor: "transparent",
+                    boxShadow: "0 0 20px darkgreen",
+                    borderRadius: "10px",
+                    border: "darkgreen solid 2px",
+                    color: "lightgreen"
+                }}
+                autoFocus
+                id="typing"
+                name="typing"
+                value={typing2}
+                onChange={handleChangeTyping}
+                onKeyDown={sendMessageIfEnter}></textarea>
+            {/*<button onClick={sendMessage}>Enter</button>*/}
+        </div>
     )
 }
 

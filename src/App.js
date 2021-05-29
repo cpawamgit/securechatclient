@@ -186,17 +186,12 @@ function App() {
   }, [displayStatus])
 
   function handleConnectionStatus(value) {
-    console.log("enter in handle...")
     if (!value) {
       if (displayStatus) {
-        console.log("---------1------------")
         setDisplayStatus(false)
       }
     } else {
-      console.log("display status")
-      console.log(displayStatus)
       if (!displayStatus) {
-        console.log("----------2------------")
         setDisplayStatus(true)
       }
     }
