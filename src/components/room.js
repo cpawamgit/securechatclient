@@ -16,7 +16,6 @@ function Room(params) {
         id: null
     })
     const [displayWindow, setDisplayedWindow] = useState('chat')
-
     function handleQuote(msg) {
         setTyping(
             `${msg.sender} said :\n"${msg.msg}"\n\n`
@@ -27,7 +26,6 @@ function Room(params) {
 
     function handleMessageOptions(id) {
         if (messageOptions.activated && id === messageOptions.id) {
-            console.log("case if")
             setMessageOptions({
                 activated: false,
                 id: null
@@ -111,19 +109,6 @@ function Room(params) {
         setPendingRequest(null)
     }
 
-    function buildList() {
-        if (params.userList && Array.isArray(params.userList)) {
-            return params.userList.map((item) => {
-                return (<div key={uuidv4()} className="users">
-                    <p>{item.nickName}</p>
-                    <p>{item.owner ? "admin" : "user"}</p>
-                </div>)
-            })
-        } else {
-            return null;
-        }
-    }
-
     async function decypher(msg) {
         const decyphered = await window.crypto.subtle.decrypt(
             {
@@ -165,50 +150,97 @@ function Room(params) {
     useEffect(() => {
         let elem = document.getElementById("msg-displayer")
         if (elem) {
-            elem.scrollTop = elem.scrollTop + 1000
+            elem.scrollTop = elem.scrollHeight
         }
     }, [messagesList])
 
-    const users = buildList()
-    const waitingUsers = <div>
-        <h2>Users waiting for approval :</h2>
-        {requestList.map((item) => {
-            return (<div style={{ display: "flex", flexDirection: "row" }}>
-                <button style={{ color: "darkgreen" }}
-                    onClick={() => handlePendingRequest(item, 'accept')}
-                >Accept</button>
-                <p>{item.nickName}</p>
-                <button style={{ color: "red" }}
-                    onClick={() => handlePendingRequest(item, 'deny')}
-                >Deny</button>
-            </div>)
-        })}
-    </div>
+    useEffect(() => {
+        if (requestList.length > 0){
+            let btn = document.getElementById("requests-btn")
+            if (btn){
+                var inter = setInterval(() => {
+                    btn.style.border = "2px solid yellow"
+                    setTimeout(() => {
+                        btn.style.border = "2px solid darkgreen"
+                    }, 500);
+                }, 5000);
+            }            
+        }        
+        return () => clearInterval(inter)
+    }, [requestList])
+
     const confirmButtons = pendingRequest !== null ?
         pendingRequest.decision === 'accept' ?
             <div style={{
+                width: "100vw",
+                height: "100vh",
                 position: "fixed",
-                zIndex: 2,
                 top: 0,
                 left: 0,
-                height: "100vh",
-                width: "100vw",
-                backgroundColor: "rgba(30, 30, 30, 0.2)"
+                zIndex: 5,
+                backgroundColor: "rgba(0,0,0,0.8)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center"
             }}>
                 <p style={{
-                    backgroundColor: "white",
-                    width: "20vw",
-                    marginLeft: "40vw",
-                    marginTop: "60vh"
+                    color: "lightgreen",
+                    fontSize: "calc(1vh + 1vw)",
+                    marginBottom: "3vh"
                 }}>Are you sur to accept {pendingRequest.user.nickName} request</p>
-                <button onClick={() => handleConfirm(true)}>Yes</button>
-                <button onClick={() => handleConfirm(false)}>No</button>
+                <div
+                    style={{
+                        width: "20vw",
+                        display: "flex",
+                        justifyContent: "space-around"
+                    }}
+                >
+                    <button
+                        className="styled-button"
+                        onClick={() => handleConfirm(true)}>Yes</button>
+                    <button
+                        className="styled-button"
+                        onClick={() => handleConfirm(false)}>No</button>
+                </div>
             </div>
             :
-            <div style={{ zIndex: 2, height: "90vh", width: "90vw", backgroundColor: "lightgray" }}>
-                <p>Are you sur to deny {pendingRequest.user.nickName} request</p>
-                <button onClick={() => handleConfirm(true)}>Yes</button>
-                <button onClick={() => handleConfirm(false)}>No</button>
+            <div
+                style={{
+                    width: "100vw",
+                    height: "100vh",
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    zIndex: 5,
+                    backgroundColor: "rgba(0,0,0,0.8)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}
+            >
+                <p
+                    style={{
+                        color: "lightgreen",
+                        fontSize: "calc(1vh + 1vw)",
+                        marginBottom: "3vh"
+                    }}
+                >Are you sur to deny {pendingRequest.user.nickName} request</p>
+                <div
+                    style={{
+                        width: "20vw",
+                        display: "flex",
+                        justifyContent: "space-around"
+                    }}
+                >
+                    <button
+                        className="styled-button"
+                        onClick={() => handleConfirm(true)}>Yes</button>
+                    <button
+                        className="styled-button"
+                        onClick={() => handleConfirm(false)}>No</button>
+                </div>
             </div>
         :
         null
@@ -228,21 +260,25 @@ function Room(params) {
                 onClick={() => setDisplayedWindow("chat")}
                 className="styled-button"
                 style={{
-                    fontSize: "calc(0.75vh + 0.75vw)"
+                    fontSize: "calc(0.75vh + 0.75vw)",
+                    backgroundColor: displayWindow === "chat" ? "darkgreen" : "transparent"
                 }}
             >Messages</button>
             <button
                 onClick={() => setDisplayedWindow("users")}
                 className="styled-button"
                 style={{
-                    fontSize: "calc(0.75vh + 0.75vw)"
+                    fontSize: "calc(0.75vh + 0.75vw)",
+                    backgroundColor: displayWindow === "users" ? "darkgreen" : "transparent"
                 }}
             >Users</button>
             {params.isAdmin && <button
+                id="requests-btn"
                 onClick={() => setDisplayedWindow("requests")}
                 className="styled-button"
                 style={{
-                    fontSize: "calc(0.75vh + 0.75vw)"
+                    fontSize: "calc(0.75vh + 0.75vw)",
+                    backgroundColor: displayWindow === "requests" ? "darkgreen" : "transparent"
                 }}
             >Requests</button>}
         </div>
@@ -298,56 +334,45 @@ function Room(params) {
                         marginTop: "1%"
                     }}
                 >
-                    {/* <TransitionGroup className="toto">
-                        {styledMsgs.map((item) => {
-                           return (<CSSTransition
-                                classNames="msg-anim"
-                                key={item.id}
-                                timeout={500}
-                            >
-                                {item.msg}
-                            </CSSTransition>)
-                        })}
-                    </TransitionGroup> */}
                     <TransitionGroup className="toto">
-                    {messagesList.map((item) => {
-        let user = params.userColors.find((usr) => usr.nickName === item.sender)
-        if (!user) {
-            user = { color: "lightgreen" }
-        }
-        return (
-            <CSSTransition
-                                classNames="msg-anim"
-                                key={item.id}
-                                timeout={500}
+                        {messagesList.map((item) => {
+                            let user = params.userColors.find((usr) => usr.nickName === item.sender)
+                            if (!user) {
+                                user = { color: "lightgreen" }
+                            }
+                            return (
+                                <CSSTransition
+                                    classNames="msg-anim"
+                                    key={item.id}
+                                    timeout={500}
                                 >
-            <div style={{
-                backgroundColor: user.color,
-                width: "max-content",
-                maxWidth: "80%",
-                wordBreak: "break-word",
-                boxShadow: "0 0 20px darkgreen",
-                borderRadius: "10px",
-                border: "darkgreen solid 2px",
-                marginTop: "1vh",
-                marginBottom: "1vh",
-                padding: "0.5vh 0.5vw 0.5vh 0.5vw",
-                fontSize: "calc(0.75vh + 0.75vw)"
-            }}
-                id={item.id}
-                key={`in${item.id}`}
-                onClick={() => handleMessageOptions(item.id)}
-                className="message">
-                <p>{item.sender} : </p>
-                <p style={{ whiteSpace: "pre-wrap" }}>{item.msg}</p>
-                {(messageOptions.activated && messageOptions.id === item.id) &&
-                    <button onClick={() => handleQuote(item)} >Quote</button>
-                }
-            </div>
-            </CSSTransition>
-        )
-    })}
-    </TransitionGroup>
+                                    <div style={{
+                                        backgroundColor: user.color,
+                                        width: "max-content",
+                                        maxWidth: "80%",
+                                        wordBreak: "break-word",
+                                        boxShadow: "0 0 20px darkgreen",
+                                        borderRadius: "10px",
+                                        border: "darkgreen solid 2px",
+                                        marginTop: "1vh",
+                                        marginBottom: "1vh",
+                                        padding: "0.5vh 0.5vw 0.5vh 0.5vw",
+                                        fontSize: "calc(0.75vh + 0.75vw)"
+                                    }}
+                                        id={item.id}
+                                        key={`in${item.id}`}
+                                        onClick={() => handleMessageOptions(item.id)}
+                                        className="message">
+                                        <p>{item.sender} : </p>
+                                        <p style={{ whiteSpace: "pre-wrap" }}>{item.msg}</p>
+                                        {(messageOptions.activated && messageOptions.id === item.id) &&
+                                            <button onClick={() => handleQuote(item)} >Quote</button>
+                                        }
+                                    </div>
+                                </CSSTransition>
+                            )
+                        })}
+                    </TransitionGroup>
                 </div>
                 <div
                     style={{
@@ -361,14 +386,94 @@ function Room(params) {
                     />
                 </div>
             </div>}
-            <div
-                style={{
-                    backgroundColor: "red",
-                }}
-            >
-                {(params.isAdmin && displayWindow === "requests") && waitingUsers}
-                {displayWindow === "users" && users}
-            </div>
+            {(params.isAdmin && displayWindow === "requests") &&
+                <div
+                    style={{
+                        width: "80%",
+                        height: "85%",
+                        maxHeight: "85%",
+                        position: "relative",
+                        scrollbarColor: "darkgreen lightgreen",
+                        overflowX: "hidden",
+                        scrollbarWidth: "thin",
+                        marginTop: "5%",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center"
+                    }}
+                >
+                    {requestList.map((item) => {
+                        return (<div
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                marginTop: "2vh",
+                                width: "100%",
+                                justifyContent: "space-around"
+                            }}>
+                            <button
+                                className="styled-button"
+                                onClick={() => handlePendingRequest(item, 'accept')}
+                            >Accept</button>
+                            <p
+                                style={{
+                                    color: "lightgreen",
+                                    fontSize: "calc(1vh + 1vw)"
+                                }}
+                            >{item.nickName}</p>
+                            <button
+                                className="styled-button"
+                                style={{ color: "red" }}
+                                onClick={() => handlePendingRequest(item, 'deny')}
+                            >Deny</button>
+                        </div>)
+                    })}
+                </div>
+            }
+            {displayWindow === "users" &&
+                <div
+                    style={{
+                        width: "80%",
+                        height: "85%",
+                        maxHeight: "85%",
+                        position: "relative",
+                        scrollbarColor: "darkgreen lightgreen",
+                        overflowX: "hidden",
+                        scrollbarWidth: "thin",
+                        marginTop: "5%",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center"
+                    }}
+                >
+                    {params.userList.map((item) => {
+                        let user = params.userColors.find((usr) => usr.nickName === item.nickName)
+                        if (!user) {
+                            user = { color: "lightgreen" }
+                        }
+                        return (<div
+                            style={{
+                                backgroundColor: user.color,
+                                height: "max-content",
+                                width: "max-content",
+                                marginTop: "1vh",
+                                boxShadow: "0 0 20px darkgreen",
+                                borderRadius: "10px",
+                                border: "darkgreen solid 2px",
+                                padding: "0.5vh 0.5vw 0.5vh 0.5vw",
+
+                            }}
+                            key={item.nickName} className="users">
+                            <p
+                                style={{
+                                    fontSize: "calc(1vh + 1vw)",
+                                    textAlign: "center"
+                                }}
+                            >{item.nickName}</p>
+                        </div>)
+                    })}
+                </div>
+            }
             {pendingRequest !== null && confirmButtons}
         </div>
     )

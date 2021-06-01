@@ -102,7 +102,7 @@ function App() {
         if (user.nickName === nickName) {
           coloredUser = {
             nickName: user.nickName,
-            color: "white"
+            color: "lightgreen"
           }
         } else {
           coloredUser = {

@@ -237,9 +237,11 @@ a{
 
 .msg-anim-enter{
   opacity: 0;
+  transform: scale(0,0);
 }
 
 .msg-anim-enter-active{
   opacity: 1;
-  transition: opacity 500ms ease-in;
+  transform: scale(1,1);
+  transition: opacity 400ms ease-in, transform 200ms ease-in;
 }
