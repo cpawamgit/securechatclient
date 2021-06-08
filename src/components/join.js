@@ -130,7 +130,7 @@ function Join(params) {
             style={{
                 position: "relative",
                 width: width,
-                height: "100%",
+                height: "75%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -138,7 +138,6 @@ function Join(params) {
                 marginTop: "4vh",
                 marginBottom: "4vh",
                 borderRadius: "10px",
-                overflow: "hidden",
                 boxShadow: "0 0 20px darkgreen",
                 border: "darkgreen solid 2px"
             }}
@@ -272,7 +271,9 @@ function Join(params) {
                     width: "90%",
                     height: "80%",
                     position: "relative",
-                    overflow: "hidden",
+                    overflowX: "hidden",
+                    scrollbarColor: "darkgreen lightgreen",
+                    scrollbarWidth: "thin",
                 }}
             >
                 {rooms}

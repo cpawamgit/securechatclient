@@ -5,6 +5,7 @@ import {
   HashRouter as Router,
   Switch,
   Route,
+  Redirect,
 } from "react-router-dom";
 import Home from "./components/home";
 import Create from "./components/create";
@@ -16,7 +17,7 @@ import matrix from './matrix.jpg'
 import Title from './components/title';
 
 /////////////   SRV CONFIG    /////////////////////
-const localMode = false
+const localMode = true
 
 const localSRV = "http://localhost:3002";
 const liveSRV = "https://server2.cyrilmorin.fr:3002";
@@ -51,7 +52,6 @@ function App() {
   })
   const [displayStatus, setDisplayStatus] = useState(true)
   const [popUp, setPopUp] = useState(false)
-
 
   function refreshRatio() {
     setRatio({
@@ -89,7 +89,7 @@ function App() {
     let color = colorArray.splice(num, 1)
     setColors(colorArray);
     return color[0];
-  }
+  }    
 
   useEffect(() => {
     let coloredUser;
@@ -318,6 +318,7 @@ function App() {
               <Home />
             </Route>
             <Route exact path="/create">
+              {exportedPublicKey !== '' ?
               <Create socket={actualSocket}
                 exportedPublicKey={exportedPublicKey}
                 roomName={roomName}
@@ -329,8 +330,11 @@ function App() {
                 setIsAdmin={setIsAdmin}
                 ratio={ratio}
               />
+              :
+              <Home />}
             </Route>
             <Route exact path="/join">
+            {exportedPublicKey !== '' ?
               <Join roomName={roomName}
                 setRoomName={setRoomName}
                 socket={actualSocket}
@@ -342,8 +346,11 @@ function App() {
                 setPassword={setPassword}
                 ratio={ratio}
               />
+              :
+              <Home />}
             </Route>
             <Route exact path="/room">
+            {exportedPublicKey !== '' ?
               <Room socket={actualSocket}
                 roomName={roomName}
                 nickName={nickName}
@@ -355,6 +362,8 @@ function App() {
                 isAdmin={isAdmin}
                 ratio={ratio}
               />
+              :
+              <Redirect to="/" />}
             </Route>
             <Route exact path="/howto">
               <HowTo

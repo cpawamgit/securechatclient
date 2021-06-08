@@ -6,7 +6,7 @@ function Home(params) {
     return (
         <div className="home-wrapper"
             style={{
-                height: "100%",
+                height: "75%",
                 width: "100%",
                 position: "relative"
             }}

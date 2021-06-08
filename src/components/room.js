@@ -356,6 +356,8 @@ function Room(params) {
                                         border: "darkgreen solid 2px",
                                         marginTop: "1vh",
                                         marginBottom: "1vh",
+                                        marginLeft: item.sender === "You" ? "auto" : 0,
+                                        marginRight: item.sender === "You" ? 0 : "auto",
                                         padding: "0.5vh 0.5vw 0.5vh 0.5vw",
                                         fontSize: "calc(0.75vh + 0.75vw)"
                                     }}
