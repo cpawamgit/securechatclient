@@ -316,7 +316,7 @@ function App() {
               <Home />
             </Route>
             <Route exact path="/create">
-              {exportedPublicKey !== '' ?
+              {(exportedPublicKey !== '' && socket) ?
               <Create socket={actualSocket}
                 exportedPublicKey={exportedPublicKey}
                 roomName={roomName}
@@ -332,7 +332,7 @@ function App() {
               <Home />}
             </Route>
             <Route exact path="/join">
-            {exportedPublicKey !== '' ?
+            {(exportedPublicKey !== '' && socket) ?
               <Join roomName={roomName}
                 setRoomName={setRoomName}
                 socket={actualSocket}
@@ -348,7 +348,7 @@ function App() {
               <Home />}
             </Route>
             <Route exact path="/room">
-            {exportedPublicKey !== '' ?
+            {(exportedPublicKey !== '' && socket) ?
               <Room socket={actualSocket}
                 roomName={roomName}
                 nickName={nickName}
