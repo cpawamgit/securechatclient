@@ -29,10 +29,6 @@ if (!localMode) {
   }
 }
 
-
-const socket = io(srv);
-
-
 function App() {
   const [actualSocket, setActualSocket] = useState(null)
   const [roomName, setRoomName] = useState('');
@@ -52,6 +48,8 @@ function App() {
   })
   const [displayStatus, setDisplayStatus] = useState(true)
   const [popUp, setPopUp] = useState(false)
+
+  const socket = io(srv);
 
   function refreshRatio() {
     setRatio({
