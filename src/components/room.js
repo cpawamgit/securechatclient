@@ -291,7 +291,7 @@ function Room(params) {
             style={{
                 backgroundColor: "rgba(0,0,0,0.8)",
                 width: width,
-                height: "80vh",
+                height: "80%",
                 marginTop: "4vh",
                 marginBottom: "4vh",
                 borderRadius: "10px",
