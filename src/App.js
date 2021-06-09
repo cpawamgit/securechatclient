@@ -17,7 +17,7 @@ import matrix from './matrix.jpg'
 import Title from './components/title';
 
 /////////////   SRV CONFIG    /////////////////////
-const localMode = false
+const localMode = true
 
 const localSRV = "http://localhost:3002";
 const liveSRV = "https://server2.cyrilmorin.fr:3002";
@@ -28,6 +28,8 @@ if (!localMode) {
     window.location.protocol = "https:";
   }
 }
+
+const socket = io(srv);
 
 function App() {
   const [actualSocket, setActualSocket] = useState(null)
@@ -49,7 +51,8 @@ function App() {
   const [displayStatus, setDisplayStatus] = useState(true)
   const [popUp, setPopUp] = useState(false)
 
-  const socket = io(srv);
+  console.log(`socket :`)
+  console.log(socket.id)
 
   function refreshRatio() {
     setRatio({
@@ -316,7 +319,7 @@ function App() {
               <Home />
             </Route>
             <Route exact path="/create">
-              {(exportedPublicKey !== '' && socket) ?
+              {(exportedPublicKey !== '' && actualSocket) ?
               <Create socket={actualSocket}
                 exportedPublicKey={exportedPublicKey}
                 roomName={roomName}
@@ -332,7 +335,7 @@ function App() {
               <Home />}
             </Route>
             <Route exact path="/join">
-            {(exportedPublicKey !== '' && socket) ?
+            {(exportedPublicKey !== '' && actualSocket) ?
               <Join roomName={roomName}
                 setRoomName={setRoomName}
                 socket={actualSocket}
@@ -348,7 +351,7 @@ function App() {
               <Home />}
             </Route>
             <Route exact path="/room">
-            {(exportedPublicKey !== '' && socket) ?
+            {(exportedPublicKey !== '' && actualSocket) ?
               <Room socket={actualSocket}
                 roomName={roomName}
                 nickName={nickName}
