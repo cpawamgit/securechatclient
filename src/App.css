@@ -235,6 +235,12 @@ a{
   to{opacity: 1;}
 } */
 
+.confirm-text{
+    color: lightgreen;
+    font-size: 52px;
+    margin-bottom: 3vh;
+}
+
 .msg-anim-enter{
   opacity: 0;
   transform: scale(0,0);
@@ -244,4 +250,50 @@ a{
   opacity: 1;
   transform: scale(1,1);
   transition: opacity 400ms ease-in, transform 200ms ease-in;
+}
+
+/* QUERIES */
+
+@media (max-width: 600px){
+  label{
+    color: lightgreen;
+    font-size: calc(1vh + 1vw);
+  }
+  
+  h1{
+    color: lightgreen;
+    font-size: calc(0.75vh + 0.75vw);
+  }
+
+  .home-buttons > p {
+    color: lightgreen;
+    font-size: calc(2vh + 2vw);
+  }
+
+  .button-group > button, .styled-button{
+    background-color: transparent;
+    box-shadow: 0 0 20px darkgreen;
+    border-radius: 10px;
+    border: darkgreen solid 2px;
+    font-size: 26px;
+    color: lightgreen;
+  }
+
+  #password, #nickName, #roomName, #search{
+    background-color: transparent;
+    box-shadow: 0 0 20px darkgreen;
+    border-radius: 10px;
+    border: darkgreen solid 2px;
+    font-size: calc(1vh + 1vw);
+    color: lightgreen;
+  }
+
+  .howto > p{
+    color: lightgreen;
+    padding-left: 2vw;
+    padding-right: 2vw;
+    padding-top: 3vh;
+    font-size: calc(0.75vh + 0.75vw);
+    line-height: 4vh;
+  }
 }

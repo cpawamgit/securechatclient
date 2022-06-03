@@ -155,17 +155,17 @@ function Room(params) {
     }, [messagesList])
 
     useEffect(() => {
-        if (requestList.length > 0){
+        if (requestList.length > 0) {
             let btn = document.getElementById("requests-btn")
-            if (btn){
+            if (btn) {
                 var inter = setInterval(() => {
                     btn.style.border = "2px solid yellow"
                     setTimeout(() => {
                         btn.style.border = "2px solid darkgreen"
                     }, 500);
                 }, 5000);
-            }            
-        }        
+            }
+        }
         return () => clearInterval(inter)
     }, [requestList])
 
@@ -184,11 +184,9 @@ function Room(params) {
                 alignItems: "center",
                 justifyContent: "center"
             }}>
-                <p style={{
-                    color: "lightgreen",
-                    fontSize: "calc(1vh + 1vw)",
-                    marginBottom: "3vh"
-                }}>Are you sur to accept {pendingRequest.user.nickName} request</p>
+                <p
+                    className="confirm-text"
+                >Are you sur to accept {pendingRequest.user.nickName} request</p>
                 <div
                     style={{
                         width: "20vw",
@@ -221,11 +219,7 @@ function Room(params) {
                 }}
             >
                 <p
-                    style={{
-                        color: "lightgreen",
-                        fontSize: "calc(1vh + 1vw)",
-                        marginBottom: "3vh"
-                    }}
+                    className="confirm-text"
                 >Are you sur to deny {pendingRequest.user.nickName} request</p>
                 <div
                     style={{
