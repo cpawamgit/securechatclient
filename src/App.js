@@ -17,7 +17,7 @@ import matrix from './matrix.jpg'
 import Title from './components/title';
 
 /////////////   SRV CONFIG    /////////////////////
-const localMode = false
+const localMode = true
 
 const localSRV = "http://localhost:3002";
 const liveSRV = "https://server2.cyrilmorin.fr:3002";
@@ -50,6 +50,7 @@ function App() {
   })
   const [displayStatus, setDisplayStatus] = useState(true)
   const [popUp, setPopUp] = useState(false)
+  const [firstLoadPopUp, setFirstLoadPopUp] = useState(true)
 
   console.log(`socket :`)
   console.log(socket.id)
@@ -90,7 +91,7 @@ function App() {
     let color = colorArray.splice(num, 1)
     setColors(colorArray);
     return color[0];
-  }    
+  }
 
   useEffect(() => {
     let coloredUser;
@@ -219,6 +220,23 @@ function App() {
   centerWidth = centerWidth > 95 ? 95 : centerWidth
   return (
     <div className="main-container">
+      {
+        firstLoadPopUp &&
+        <div id='firstLoadPopUp'
+          onClick={() => setFirstLoadPopUp(false)}
+        >
+          <div id='firstLoadPopUp-center'>
+            <p>This App is one my very first.</p>
+            <p>Looking at it more than one year after its creation,
+              I can tell that the CSS and that some functionalities
+              can be greatly improved to make this nice little app more
+              convenient to use and better looking. So...
+            </p>
+            <p>Version 2 is on its way !</p>
+            <button>OK !</button>
+          </div>
+        </div>
+      }
       <div className="black-bg"
         style={{
           backgroundColor: 'black',
@@ -320,51 +338,51 @@ function App() {
             </Route>
             <Route exact path="/create">
               {(exportedPublicKey !== '' && actualSocket) ?
-              <Create socket={actualSocket}
-                exportedPublicKey={exportedPublicKey}
-                roomName={roomName}
-                setRoomName={setRoomName}
-                nickName={nickName}
-                setNickName={setNickName}
-                password={password}
-                setPassword={setPassword}
-                setIsAdmin={setIsAdmin}
-                ratio={ratio}
-              />
-              :
-              <Home />}
+                <Create socket={actualSocket}
+                  exportedPublicKey={exportedPublicKey}
+                  roomName={roomName}
+                  setRoomName={setRoomName}
+                  nickName={nickName}
+                  setNickName={setNickName}
+                  password={password}
+                  setPassword={setPassword}
+                  setIsAdmin={setIsAdmin}
+                  ratio={ratio}
+                />
+                :
+                <Home />}
             </Route>
             <Route exact path="/join">
-            {(exportedPublicKey !== '' && actualSocket) ?
-              <Join roomName={roomName}
-                setRoomName={setRoomName}
-                socket={actualSocket}
-                nickName={nickName}
-                setNickName={setNickName}
-                exportedPublicKey={exportedPublicKey}
-                setIsAdmin={setIsAdmin}
-                password={password}
-                setPassword={setPassword}
-                ratio={ratio}
-              />
-              :
-              <Home />}
+              {(exportedPublicKey !== '' && actualSocket) ?
+                <Join roomName={roomName}
+                  setRoomName={setRoomName}
+                  socket={actualSocket}
+                  nickName={nickName}
+                  setNickName={setNickName}
+                  exportedPublicKey={exportedPublicKey}
+                  setIsAdmin={setIsAdmin}
+                  password={password}
+                  setPassword={setPassword}
+                  ratio={ratio}
+                />
+                :
+                <Home />}
             </Route>
             <Route exact path="/room">
-            {(exportedPublicKey !== '' && actualSocket) ?
-              <Room socket={actualSocket}
-                roomName={roomName}
-                nickName={nickName}
-                pubKey={pubKey}
-                privKey={privKey}
-                exportedPublicKey={exportedPublicKey}
-                userList={userList}
-                userColors={userColors}
-                isAdmin={isAdmin}
-                ratio={ratio}
-              />
-              :
-              <Redirect to="/" />}
+              {(exportedPublicKey !== '' && actualSocket) ?
+                <Room socket={actualSocket}
+                  roomName={roomName}
+                  nickName={nickName}
+                  pubKey={pubKey}
+                  privKey={privKey}
+                  exportedPublicKey={exportedPublicKey}
+                  userList={userList}
+                  userColors={userColors}
+                  isAdmin={isAdmin}
+                  ratio={ratio}
+                />
+                :
+                <Redirect to="/" />}
             </Route>
             <Route exact path="/howto">
               <HowTo
