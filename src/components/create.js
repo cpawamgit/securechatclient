@@ -50,21 +50,21 @@ function Create(params) {
             width: width
         }}
         >
-            <div className="room-access-select"
+            <div id="room-access-select"
                 style={{
                     width: "100%"
                 }}
             >
                 <div className="button-group"
-                    style={{
-                        width: "100%",
-                        height: "10vh",
-                        marginTop: "3vh",
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-around",
-                    }}
+                    // style={{
+                    //     width: "100%",
+                    //     height: "10vh",
+                    //     marginTop: "3vh",
+                    //     display: "flex",
+                    //     flexDirection: "row",
+                    //     alignItems: "center",
+                    //     justifyContent: "space-around",
+                    // }}
                 >
                     <button
                         onClick={() => setAccess('password')}
@@ -84,15 +84,16 @@ function Create(params) {
                 </div>
             </div>
             <form
-                style={{
-                    width: "80%",
-                    height: "70%",
-                    marginTop: "5%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "space-around"
-                }}
+                id="room-creation-form"
+                // style={{
+                //     width: "80%",
+                //     height: "70%",
+                //     marginTop: "5%",
+                //     display: "flex",
+                //     flexDirection: "column",
+                //     alignItems: "center",
+                //     justifyContent: "space-around"
+                // }}
                 className="creation-form"
                 onSubmit={handleSubmit}>
                 <label htmlFor="nickName">Enter your nickname :</label>
@@ -124,14 +125,15 @@ function Create(params) {
 
                 <input type="hidden" value={params.id} name="id"></input>
                 <button
-                    style={{
-                        borderRadius: "10px",
-                        boxShadow: "0 0 20px darkgreen",
-                        border: "darkgreen solid 2px",
-                        backgroundColor: "transparent",
-                        color: "lightgreen",
-                        fontSize: "calc(1vh + 1vw)"
-                    }}
+                    id="create-room-btn"
+                    // style={{
+                    //     borderRadius: "10px",
+                    //     boxShadow: "0 0 20px darkgreen",
+                    //     border: "darkgreen solid 2px",
+                    //     backgroundColor: "transparent",
+                    //     color: "lightgreen",
+                    //     fontSize: "calc(1vh + 1vw)"
+                    // }}
                     type="submit">Create Room !</button>
             </form>
             {redirect && <Redirect to="/room" />}

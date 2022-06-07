@@ -1,12 +1,82 @@
-.App {
+#app-main-wrapper{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
 
+#main-wrapper {
   background-color: rgba(0, 255, 0, 0.164);
   box-shadow: 0 0 100px darkgreen;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+  width: 900px;
 }
 
 body{
   margin: 0;
   padding: 0;
+}
+
+#status-displayer{
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 5px;
+  border-radius: 8px;
+  margin-bottom: 50px;
+}
+
+#firstLoadPopUp{
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  z-index: 99;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#firstLoadPopUp-center{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 80vh;
+  width: 50%;
+  justify-content: space-around;
+}
+
+#firstLoadPopUp-center > p{
+  font-size: 26px;
+  color: lightgreen;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#firstLoadPopUp-center > button{
+  font-size: 26px;
+  color: lightgreen;
+  padding: 10px;
+  background-color: black;
+  border: 2px solid darkgreen;
+  cursor: pointer;
+}
+
+@media (max-width: 600px){
+  #firstLoadPopUp-center{
+    height: 90vh;
+    width: 90%;
+  }
+}
+
+.status-text{
+  font-size: 22px;
 }
 
 ::-webkit-scrollbar {
@@ -15,6 +85,13 @@ body{
 
 ::-webkit-scrollbar-thumb{
   background: darkgreen;
+}
+
+#room-creation-form{
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 p{
@@ -30,7 +107,8 @@ img{
 
 label{
   color: lightgreen;
-  font-size: calc(1vh + 1vw);
+  font-size: 28px;
+  margin-bottom: 10px;
 }
 
 h1{
@@ -159,10 +237,25 @@ a{
   border: darkgreen solid 2px;
 }
 
+#room-access-select{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .creation-form{
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+
+.button-group{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 80%;
+  margin-top: 30px;
+  margin-bottom: 40px;
 }
 
 .button-group > button, .styled-button{
@@ -170,7 +263,7 @@ a{
   box-shadow: 0 0 20px darkgreen;
   border-radius: 10px;
   border: darkgreen solid 2px;
-  font-size: calc(1vh + 1vw);
+  font-size: 28px;
   color: lightgreen;
 }
 
@@ -179,8 +272,23 @@ a{
   box-shadow: 0 0 20px darkgreen;
   border-radius: 10px;
   border: darkgreen solid 2px;
-  font-size: calc(1vh + 1vw);
+  font-size: 24px;
   color: lightgreen;
+  margin-bottom: 30px;
+}
+
+#create-room-btn{
+  border-radius: 8px;
+  box-shadow: 0 0 20px darkgreen;
+  border: darkgreen solid 2px;
+  background-color: transparent;
+  color: lightgreen;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 28px;
+  margin-top: 10px;
+  margin-bottom: 30px;
 }
 
 /********************************************************
@@ -254,10 +362,74 @@ a{
 
 /* QUERIES */
 
-@media (max-width: 600px){
+@media (max-width: 1000px){
+  #main-wrapper{
+    width: 90%;
+  }
+
+  .status-text{
+    font-size: 16px;
+  }
+
   label{
     color: lightgreen;
-    font-size: calc(1vh + 1vw);
+    font-size: 24px;
+  }
+  
+  h1{
+    color: lightgreen;
+    font-size: calc(0.75vh + 0.75vw);
+  }
+
+  .home-buttons > p {
+    color: lightgreen;
+    font-size: calc(2vh + 2vw);
+  }
+
+  #create-room-btn{
+    font-size: 22px;
+  }
+
+  .button-group > button, .styled-button{
+    background-color: transparent;
+    box-shadow: 0 0 20px darkgreen;
+    border-radius: 10px;
+    border: darkgreen solid 2px;
+    font-size: 20px;
+    color: lightgreen;
+  }
+
+  #password, #nickName, #roomName, #search{
+    background-color: transparent;
+    box-shadow: 0 0 20px darkgreen;
+    border-radius: 10px;
+    border: darkgreen solid 2px;
+    font-size: 20px;
+    color: lightgreen;
+  }
+
+  .howto > p{
+    color: lightgreen;
+    padding-left: 2vw;
+    padding-right: 2vw;
+    padding-top: 3vh;
+    font-size: calc(0.75vh + 0.75vw);
+    line-height: 4vh;
+  }
+}
+
+@media (max-width: 600px){
+  #main-wrapper{
+    width: 95%;
+  }
+
+  .status-text{
+    font-size: 14px;
+  }
+
+  label{
+    color: lightgreen;
+    font-size: 20px;
   }
   
   h1{
@@ -275,7 +447,7 @@ a{
     box-shadow: 0 0 20px darkgreen;
     border-radius: 10px;
     border: darkgreen solid 2px;
-    font-size: 26px;
+    font-size: 16px;
     color: lightgreen;
   }
 
@@ -284,8 +456,12 @@ a{
     box-shadow: 0 0 20px darkgreen;
     border-radius: 10px;
     border: darkgreen solid 2px;
-    font-size: calc(1vh + 1vw);
+    font-size: 16px;
     color: lightgreen;
+  }
+
+  #create-room-btn{
+    font-size: 18px;
   }
 
   .howto > p{

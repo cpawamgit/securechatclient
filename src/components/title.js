@@ -94,7 +94,6 @@ function Title(params) {
             style={{
                 display: "flex",
                 flexDirection: "row",
-                marginTop: "3vh",
                 marginBottom: 0,
                 padding: 0,
                 alignItems: "end",
