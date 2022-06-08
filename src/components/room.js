@@ -246,7 +246,7 @@ function Room(params) {
                 width: "100%",
                 display: "flex",
                 justifyContent: "space-around",
-                marginTop: "0.5%",
+                marginTop: "10px",
                 marginBottom: "0.5%"
             }}
         >
@@ -254,7 +254,6 @@ function Room(params) {
                 onClick={() => setDisplayedWindow("chat")}
                 className="styled-button"
                 style={{
-                    fontSize: "calc(0.75vh + 0.75vw)",
                     backgroundColor: displayWindow === "chat" ? "darkgreen" : "transparent"
                 }}
             >Messages</button>
@@ -262,7 +261,6 @@ function Room(params) {
                 onClick={() => setDisplayedWindow("users")}
                 className="styled-button"
                 style={{
-                    fontSize: "calc(0.75vh + 0.75vw)",
                     backgroundColor: displayWindow === "users" ? "darkgreen" : "transparent"
                 }}
             >Users</button>
@@ -271,7 +269,6 @@ function Room(params) {
                 onClick={() => setDisplayedWindow("requests")}
                 className="styled-button"
                 style={{
-                    fontSize: "calc(0.75vh + 0.75vw)",
                     backgroundColor: displayWindow === "requests" ? "darkgreen" : "transparent"
                 }}
             >Requests</button>}
@@ -285,7 +282,6 @@ function Room(params) {
             style={{
                 backgroundColor: "rgba(0,0,0,0.8)",
                 width: width,
-                height: "80%",
                 marginTop: "4vh",
                 marginBottom: "4vh",
                 borderRadius: "10px",
@@ -294,18 +290,10 @@ function Room(params) {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                position: "relative",
             }}
         >
             <p
-                style={{
-                    color: "lightgreen",
-                    fontSize: "calc(0.75vh + 0.75vw)",
-                    margin: 0,
-                    padding: 0,
-                    marginTop: "0.5%",
-                    marginBottom: "0.5%"
-                }}
+                id="room-title"
             >Room name : {params.roomName}</p>
             {windowSelector}
             {displayWindow === "chat" && <div
@@ -318,15 +306,6 @@ function Room(params) {
             >
                 <div
                     id="msg-displayer"
-                    style={{
-                        height: "84%",
-                        width: "100%",
-                        overflow: "auto",
-                        scrollbarColor: "darkgreen lightgreen",
-                        overflowX: "hidden",
-                        scrollbarWidth: "thin",
-                        marginTop: "1%"
-                    }}
                 >
                     <TransitionGroup className="toto">
                         {messagesList.map((item) => {
@@ -359,8 +338,9 @@ function Room(params) {
                                         key={`in${item.id}`}
                                         onClick={() => handleMessageOptions(item.id)}
                                         className="message">
-                                        <p>{item.sender} : </p>
-                                        <p style={{ whiteSpace: "pre-wrap" }}>{item.msg}</p>
+                                        <p id="message-sender">{item.sender} : </p>
+                                        <p id="message-content"
+                                            style={{ whiteSpace: "pre-wrap" }}>{item.msg}</p>
                                         {(messageOptions.activated && messageOptions.id === item.id) &&
                                             <button onClick={() => handleQuote(item)} >Quote</button>
                                         }
@@ -370,17 +350,12 @@ function Room(params) {
                         })}
                     </TransitionGroup>
                 </div>
-                <div
-                    style={{
-                        height: "13%",
-                        marginTop: "1%",
-                    }}
-                >
-                    <TypeAndSend
-                        handleSend={handleSend}
-                        typing={typing}
-                    />
-                </div>
+
+                <TypeAndSend
+                    handleSend={handleSend}
+                    typing={typing}
+                    ratio={params.ratio}
+                />
             </div>}
             {(params.isAdmin && displayWindow === "requests") &&
                 <div
@@ -505,7 +480,9 @@ function TypeAndSend(params) {
                 display: "flex",
                 flexDirection: "row",
                 position: "relative",
-                height: "100%",
+                height: "80px",
+                marginTop: "5px",
+                marginBottom: "20px",
             }}
         >
             <textarea
@@ -513,8 +490,7 @@ function TypeAndSend(params) {
                     whiteSpace: "pre-wrap",
                     height: "100%",
                     maxHeight: "100%",
-                    width: "100%",
-                    fontSize: "calc(0.75vh + 0.75vw)",
+                    width: params.ratio.width < 600 ? "80%" : "100%",
                     resize: "none",
                     boxSizing: "border-box",
                     backgroundColor: "transparent",
@@ -529,7 +505,16 @@ function TypeAndSend(params) {
                 value={typing2}
                 onChange={handleChangeTyping}
                 onKeyDown={sendMessageIfEnter}></textarea>
-            {/*<button onClick={sendMessage}>Enter</button>*/}
+            {
+                params.ratio.width < 600 &&
+                <button id="send-btn"
+                className="styled-button"
+                    onClick={() => {
+                        params.handleSend(typing2)
+                        setTyping2('')
+                    }
+                    }>SEND</button>
+            }
         </div>
     )
 }

@@ -130,7 +130,7 @@ function Join(params) {
             style={{
                 position: "relative",
                 width: width,
-                height: "75%",
+                height: "700px",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",

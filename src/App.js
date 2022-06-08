@@ -17,7 +17,7 @@ import matrix from './matrix.jpg'
 import Title from './components/title';
 
 /////////////   SRV CONFIG    /////////////////////
-const localMode = false
+const localMode = true
 
 const localSRV = "http://localhost:3002";
 const liveSRV = "https://server2.cyrilmorin.fr:3002";
@@ -223,19 +223,19 @@ function App() {
       {
         firstLoadPopUp &&
         <div id='firstLoadPopUp'
-        onClick={() => setFirstLoadPopUp(false)}
+          onClick={() => setFirstLoadPopUp(false)}
         >
           <div id='firstLoadPopUp-center'>
-          <p>This App is one my very first.</p>
-          <p>Looking at it more than one year after its creation, 
-            I can tell that the CSS and that some functionalities 
-            can be greatly improved to make this nice little app more 
-            convenient to use and better looking. So...
-          </p>
-          <p>Version 2 is on its way !</p>
-          <button>OK !</button>
+            <p>This App is one my very first.</p>
+            <p>Looking at it more than one year after its creation,
+              I can tell that the CSS and that some functionalities
+              can be greatly improved to make this nice little app more
+              convenient to use and better looking. So...
+            </p>
+            <p>Version 2 is on its way !</p>
+            <button>OK !</button>
           </div>
-          </div>
+        </div>
       }
       <div className="black-bg"
         style={{
@@ -243,7 +243,9 @@ function App() {
           height: "100vh",
           width: "100vw",
           position: 'fixed',
-          zIndex: -1
+          zIndex: -1,
+          top: 0,
+          left: 0
         }}
       >
       </div>
@@ -254,6 +256,8 @@ function App() {
           width: "100vw",
           height: "100vh",
           position: 'fixed',
+          top: 0,
+          left: 0,
           zIndex: -1,
           opacity: 0.5,
           overflow: "hidden",
@@ -330,7 +334,16 @@ function App() {
           />
           <Switch>
             <Route exact path="/">
-              <Home />
+              <Home
+                socket={actualSocket}
+                roomName={roomName}
+                setRoomName={setRoomName}
+                setNickName={setNickName}
+                setPassword={setPassword}
+                setUserList={setUserList}
+                setUserColors={setUserColors}
+                setIsAdmin={setIsAdmin}
+              />
             </Route>
             <Route exact path="/create">
               {(exportedPublicKey !== '' && actualSocket) ?
@@ -388,6 +401,7 @@ function App() {
           </Switch>
         </Router>
       </div>
+      {/* <div id="footer"></div> */}
     </div>
   );
 }

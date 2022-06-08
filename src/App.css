@@ -1,4 +1,4 @@
-#app-main-wrapper{
+#app-main-wrapper {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -12,16 +12,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 2;
   width: 900px;
+  min-height: 100vh;
 }
 
-body{
+body {
   margin: 0;
   padding: 0;
 }
 
-#status-displayer{
+#status-displayer {
   width: 80%;
   display: flex;
   flex-direction: row;
@@ -31,8 +31,10 @@ body{
   margin-bottom: 50px;
 }
 
-#firstLoadPopUp{
+#firstLoadPopUp {
   position: fixed;
+  left: 0;
+  top: 0;
   height: 100vh;
   width: 100%;
   z-index: 99;
@@ -43,7 +45,7 @@ body{
   justify-content: center;
 }
 
-#firstLoadPopUp-center{
+#firstLoadPopUp-center {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -52,14 +54,14 @@ body{
   justify-content: space-around;
 }
 
-#firstLoadPopUp-center > p{
+#firstLoadPopUp-center>p {
   font-size: 26px;
   color: lightgreen;
   padding-left: 10px;
   padding-right: 10px;
 }
 
-#firstLoadPopUp-center > button{
+#firstLoadPopUp-center>button {
   font-size: 26px;
   color: lightgreen;
   padding: 10px;
@@ -68,14 +70,14 @@ body{
   cursor: pointer;
 }
 
-@media (max-width: 600px){
-  #firstLoadPopUp-center{
+@media (max-width: 600px) {
+  #firstLoadPopUp-center {
     height: 90vh;
     width: 90%;
   }
 }
 
-.status-text{
+.status-text {
   font-size: 22px;
 }
 
@@ -83,49 +85,49 @@ body{
   background: lightgreen;
 }
 
-::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb {
   background: darkgreen;
 }
 
-#room-creation-form{
+#room-creation-form {
   width: 80%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 
-p{
+p {
   margin: 0;
   padding: 0;
 }
 
-img{
+img {
   margin: 0;
   padding: 0;
   border: none;
 }
 
-label{
+label {
   color: lightgreen;
   font-size: 28px;
   margin-bottom: 10px;
 }
 
-h1{
+h1 {
   color: lightgreen;
   font-size: calc(0.75vh + 0.75vw);
 }
 
-input{
+input {
   width: 100%;
   box-sizing: border-box;
 }
 
-a{
+a {
   text-decoration: none;
 }
 
-.home-link{
+.home-link {
   margin-top: 4vh;
   width: 80%;
   height: 20vh;
@@ -136,13 +138,13 @@ a{
   position: relative;
 }
 
-@media (max-width: 600px){
-  .home-link{
+@media (max-width: 600px) {
+  .home-link {
     width: 100%;
   }
 }
 
-.home-buttons{
+.home-buttons {
   background-color: transparent;
   border: none;
   display: flex;
@@ -152,70 +154,89 @@ a{
   width: 100%;
 }
 
-.home-buttons > p {
+.home-buttons>p {
   color: lightgreen;
   font-size: calc(2vh + 2vw);
 }
 
-#title1, #title2, #title3, #title4, #title5, #title6,
-#howto1, #howto2, #howto3, #howto4, #howto5, #howto6{
+.title {
+  margin-top: 30px;
+}
+
+#title1,
+#title2,
+#title3,
+#title4,
+#title5,
+#title6,
+#howto1,
+#howto2,
+#howto3,
+#howto4,
+#howto5,
+#howto6 {
   animation-name: text-appear;
   animation-duration: 2s;
   animation-fill-mode: forwards;
   opacity: 0;
 }
 
-#title1{
+#title1 {
   animation-delay: 0.2s;
 }
 
-#title2{
+#title2 {
   animation-delay: 1s;
 }
 
-#title3{
+#title3 {
   animation-delay: 1.5s;
 }
 
-#title4{
+#title4 {
   animation-delay: 2s;
 }
 
-#title5{
+#title5 {
   animation-delay: 2.5s;
 }
 
-#title6{
+#title6 {
   animation-delay: 3s;
 }
 
-#howto1{
+#howto1 {
   animation-delay: 0s;
 }
 
-#howto2{
+#howto2 {
   animation-delay: 1.5s;
 }
 
-#howto3{
+#howto3 {
   animation-delay: 3s;
 }
 
-#howto4{
+#howto4 {
   animation-delay: 4.5s;
 }
 
-#howto5{
+#howto5 {
   animation-delay: 6s;
 }
 
-#howto6{
+#howto6 {
   animation-delay: 7.5s;
 }
 
-@keyframes text-appear{
-  from{opacity: 0;}
-  to{opacity: 1;}
+@keyframes text-appear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /********************************************************
@@ -223,12 +244,12 @@ a{
             CREATE ROOM
 
 ********************************************************/
-.create-wrapper{
+.create-wrapper {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0, 0, 0, 0.8);
   height: 80%;
   margin-top: 4vh;
   margin-bottom: 4vh;
@@ -237,19 +258,19 @@ a{
   border: darkgreen solid 2px;
 }
 
-#room-access-select{
+#room-access-select {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.creation-form{
+.creation-form {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.button-group{
+.button-group {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -258,7 +279,8 @@ a{
   margin-bottom: 40px;
 }
 
-.button-group > button, .styled-button{
+.button-group>button,
+.styled-button {
   background-color: transparent;
   box-shadow: 0 0 20px darkgreen;
   border-radius: 10px;
@@ -267,7 +289,10 @@ a{
   color: lightgreen;
 }
 
-#password, #nickName, #roomName, #search{
+#password,
+#nickName,
+#roomName,
+#search {
   background-color: transparent;
   box-shadow: 0 0 20px darkgreen;
   border-radius: 10px;
@@ -277,7 +302,7 @@ a{
   margin-bottom: 30px;
 }
 
-#create-room-btn{
+#create-room-btn {
   border-radius: 8px;
   box-shadow: 0 0 20px darkgreen;
   border: darkgreen solid 2px;
@@ -297,7 +322,7 @@ a{
 
 ********************************************************/
 
-.howto > p{
+.howto>p {
   color: lightgreen;
   padding-left: 2vw;
   padding-right: 2vw;
@@ -306,11 +331,26 @@ a{
   line-height: 4vh;
 }
 
-.howto{
+.howto {
   box-shadow: 0 0 20px darkgreen;
   border-radius: 10px;
   border: darkgreen solid 2px;
+  background-color: rgba(0, 0, 0, 0.8);
+  height: fit-content;
+  margin-top: 40px;
+  border-radius: 10px;
+  width: 80%;
+  margin-bottom: 100px;
 }
+
+/* style={{
+  backgroundColor: "rgba(0,0,0,0.8)",
+  width: width,
+  height: "80%",
+  marginTop: "4vh",
+  marginBottom: "4vh",
+  borderRadius: "10px"
+}} */
 
 /********************************************************
 
@@ -318,7 +358,7 @@ a{
 
 ********************************************************/
 
-.back-enter{
+.back-enter {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -343,54 +383,103 @@ a{
   to{opacity: 1;}
 } */
 
-.confirm-text{
-    color: lightgreen;
-    font-size: 52px;
-    margin-bottom: 3vh;
+#msg-displayer {
+  height: 550px;
+  width: 100%;
+  overflow: auto;
+  scrollbar-color: darkgreen lightgreen;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  margin-top: 5px;
 }
 
-.msg-anim-enter{
+.confirm-text {
+  color: lightgreen;
+  font-size: 52px;
+  margin-bottom: 3vh;
+}
+
+.msg-anim-enter {
   opacity: 0;
-  transform: scale(0,0);
+  transform: scale(0);
 }
 
-.msg-anim-enter-active{
+.msg-anim-enter-active {
   opacity: 1;
-  transform: scale(1,1);
+  transform: scale(1);
   transition: opacity 400ms ease-in, transform 200ms ease-in;
 }
 
+#room-title{
+    color: lightgreen;
+    font-size: calc(0.75vh + 0.75vw);
+    margin: 0;
+    padding: 0;
+    margin-top: 0.5%;
+    margin-bottom: 0.5;
+}
+
+#message-sender{
+  font-size: 16px;
+}
+
+#message-content{
+  font-size: 20px;
+}
+
+#typing{
+  font-size: 20px;
+}
+
+#send-btn{
+  width: 20%;
+}
+
+/********************************************************
+
+                Footer
+
+********************************************************/
+
+#footer {
+  height: 80px;
+  width: 100%;
+  background-color: black;
+}
+
+
 /* QUERIES */
 
-@media (max-width: 1000px){
-  #main-wrapper{
+@media (max-width: 1000px) {
+  #main-wrapper {
     width: 90%;
   }
 
-  .status-text{
+  .status-text {
     font-size: 16px;
   }
 
-  label{
+  label {
     color: lightgreen;
     font-size: 24px;
   }
-  
-  h1{
+
+  h1 {
     color: lightgreen;
     font-size: calc(0.75vh + 0.75vw);
   }
 
-  .home-buttons > p {
+  .home-buttons>p {
     color: lightgreen;
     font-size: calc(2vh + 2vw);
   }
 
-  #create-room-btn{
+  #create-room-btn {
     font-size: 22px;
   }
 
-  .button-group > button, .styled-button{
+  .button-group>button,
+  .styled-button {
     background-color: transparent;
     box-shadow: 0 0 20px darkgreen;
     border-radius: 10px;
@@ -399,7 +488,10 @@ a{
     color: lightgreen;
   }
 
-  #password, #nickName, #roomName, #search{
+  #password,
+  #nickName,
+  #roomName,
+  #search {
     background-color: transparent;
     box-shadow: 0 0 20px darkgreen;
     border-radius: 10px;
@@ -408,7 +500,7 @@ a{
     color: lightgreen;
   }
 
-  .howto > p{
+  .howto>p {
     color: lightgreen;
     padding-left: 2vw;
     padding-right: 2vw;
@@ -418,31 +510,32 @@ a{
   }
 }
 
-@media (max-width: 600px){
-  #main-wrapper{
+@media (max-width: 600px) {
+  #main-wrapper {
     width: 95%;
   }
 
-  .status-text{
+  .status-text {
     font-size: 14px;
   }
 
-  label{
+  label {
     color: lightgreen;
     font-size: 20px;
   }
-  
-  h1{
+
+  h1 {
     color: lightgreen;
     font-size: calc(0.75vh + 0.75vw);
   }
 
-  .home-buttons > p {
+  .home-buttons>p {
     color: lightgreen;
     font-size: calc(2vh + 2vw);
   }
 
-  .button-group > button, .styled-button{
+  .button-group>button,
+  .styled-button {
     background-color: transparent;
     box-shadow: 0 0 20px darkgreen;
     border-radius: 10px;
@@ -451,7 +544,10 @@ a{
     color: lightgreen;
   }
 
-  #password, #nickName, #roomName, #search{
+  #password,
+  #nickName,
+  #roomName,
+  #search {
     background-color: transparent;
     box-shadow: 0 0 20px darkgreen;
     border-radius: 10px;
@@ -460,11 +556,19 @@ a{
     color: lightgreen;
   }
 
-  #create-room-btn{
+  #create-room-btn {
     font-size: 18px;
   }
 
-  .howto > p{
+  #room-title{
+    font-size: 20px;
+}
+
+  #msg-displayer {
+    height: 450px;
+  }
+
+  .howto>p {
     color: lightgreen;
     padding-left: 2vw;
     padding-right: 2vw;
