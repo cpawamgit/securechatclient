@@ -72,7 +72,7 @@ function Title(params) {
             >Do you really want to leave the room ?</p>
             <div
             style={{
-                width: "20vw",
+                width: "40vw",
                 display: "flex",
                 justifyContent: "space-around"
             }}

@@ -189,7 +189,7 @@ function Room(params) {
                 >Are you sur to accept {pendingRequest.user.nickName} request</p>
                 <div
                     style={{
-                        width: "20vw",
+                        width: "30vw",
                         display: "flex",
                         justifyContent: "space-around"
                     }}
@@ -223,7 +223,7 @@ function Room(params) {
                 >Are you sur to deny {pendingRequest.user.nickName} request</p>
                 <div
                     style={{
-                        width: "20vw",
+                        width: "30vw",
                         display: "flex",
                         justifyContent: "space-around"
                     }}
