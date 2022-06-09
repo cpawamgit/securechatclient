@@ -240,15 +240,7 @@ function Room(params) {
         null
 
     const windowSelector =
-        <div
-            style={{
-                height: "5%",
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-around",
-                marginTop: "10px",
-                marginBottom: "0.5%"
-            }}
+        <div id="room-function-selector"
         >
             <button
                 onClick={() => setDisplayedWindow("chat")}
@@ -475,15 +467,7 @@ function TypeAndSend(params) {
     }, [params.typing])
 
     return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "row",
-                position: "relative",
-                height: "80px",
-                marginTop: "5px",
-                marginBottom: "20px",
-            }}
+        <div id='typing-div'
         >
             <textarea
                 style={{
@@ -512,6 +496,10 @@ function TypeAndSend(params) {
                     onClick={() => {
                         params.handleSend(typing2)
                         setTyping2('')
+                        let elem = document.getElementById("typing")
+                        if (elem){
+                            elem.focus()
+                        }
                     }
                     }>SEND</button>
             }

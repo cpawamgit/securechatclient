@@ -411,28 +411,46 @@ a {
   transition: opacity 400ms ease-in, transform 200ms ease-in;
 }
 
-#room-title{
-    color: lightgreen;
-    font-size: calc(0.75vh + 0.75vw);
-    margin: 0;
-    padding: 0;
-    margin-top: 0.5%;
-    margin-bottom: 0.5;
+#room-title {
+  color: lightgreen;
+  font-size: 26px;
+  margin: 0;
+  padding: 0;
+  margin-top: 0.5%;
+  margin-bottom: 0.5;
 }
 
-#message-sender{
+#room-function-selector {
+  height: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+  margin-bottom: 0.5;
+}
+
+#message-sender {
   font-size: 16px;
 }
 
-#message-content{
+#message-content {
   font-size: 20px;
 }
 
-#typing{
+#typing-div {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  height: 80px;
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+#typing {
   font-size: 20px;
 }
 
-#send-btn{
+#send-btn {
   width: 20%;
 }
 
@@ -561,9 +579,13 @@ a {
     font-size: 18px;
   }
 
-  #room-title{
+  #room-title {
     font-size: 20px;
-}
+  }
+
+  #typing-div {
+    height: 50px;
+  }
 
   #msg-displayer {
     height: 450px;
