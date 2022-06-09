@@ -13,7 +13,7 @@
   flex-direction: column;
   align-items: center;
   width: 900px;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 body {
@@ -385,6 +385,7 @@ a {
 
 #msg-displayer {
   height: 550px;
+  max-height: 55vh;
   width: 100%;
   overflow: auto;
   scrollbar-color: darkgreen lightgreen;
@@ -566,6 +567,7 @@ a {
 
   #msg-displayer {
     height: 450px;
+    max-height: 45vh;
   }
 
   .howto>p {
