@@ -17,7 +17,7 @@ import matrix from './matrix.jpg'
 import Title from './components/title';
 
 /////////////   SRV CONFIG    /////////////////////
-const localMode = false
+const localMode = true
 
 const localSRV = "http://localhost:3002";
 const liveSRV = "https://server2.cyrilmorin.fr:3002";
@@ -220,7 +220,7 @@ function App() {
   centerWidth = centerWidth > 95 ? 95 : centerWidth
   return (
     <div id="app-main-wrapper">
-      {
+      {/* {
         firstLoadPopUp &&
         <div id='firstLoadPopUp'
           onClick={() => setFirstLoadPopUp(false)}
@@ -236,7 +236,7 @@ function App() {
             <button>OK !</button>
           </div>
         </div>
-      }
+      } */}
       <div className="black-bg"
         style={{
           backgroundColor: 'black',

@@ -126,21 +126,7 @@ function Join(params) {
     const width = params.ratio.width > 600 ? "80%" : "100%"
 
     return roomList ? (
-        <div className="join-wrapper"
-            style={{
-                position: "relative",
-                width: width,
-                height: "700px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                backgroundColor: "rgba(0,0,0,0.8)",
-                marginTop: "4vh",
-                marginBottom: "4vh",
-                borderRadius: "10px",
-                boxShadow: "0 0 20px darkgreen",
-                border: "darkgreen solid 2px"
-            }}
+        <div id="join-wrapper"
         >
             {redirect && <Redirect to="/room" />}
             {searchField}
