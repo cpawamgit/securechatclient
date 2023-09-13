@@ -20,7 +20,7 @@ import Title from './components/title';
 const localMode = false
 
 const localSRV = "http://localhost:3002";
-const liveSRV = "https://server2.cyrilmorin.fr:3002";
+const liveSRV = "https://securechatapi.cyrilmorin.fr:3002";
 const srv = localMode ? localSRV : liveSRV;
 
 if (!localMode) {
